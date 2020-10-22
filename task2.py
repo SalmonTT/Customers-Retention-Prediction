@@ -5,8 +5,9 @@ import category_encoders as ce
 import numpy as np
 from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, f1_score
 from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.model_selection import GridSearchCV
+
 
 def printFullDf(df):
     # prints the dataframe in full
@@ -69,7 +70,7 @@ def print_score(clf, X_train, y_train, X_test, y_test, train=True):
             f"Classification Report: \n \tPrecision: {precision_score(y_test, pred)}\n\tRecall Score: {recall_score(y_test, pred)}\n\tF1 score: {f1_score(y_test, pred)}\n")
         print(f"Confusion Matrix: \n {confusion_matrix(y_test, pred)}\n")
 
-def decisionTree(X_train, X_test, y_train, y_test):
+def decisionTreeTuned(X_train, X_test, y_train, y_test, df):
     # Tuning the hyper-parameters
     params = {
         "criterion": ("gini", "entropy"),
@@ -88,7 +89,29 @@ def decisionTree(X_train, X_test, y_train, y_test):
     print_score(grid_search_cv.best_estimator_, X_train, y_train, X_test, y_test, train=True)
     print_score(grid_search_cv.best_estimator_, X_train, y_train, X_test, y_test, train=False)
     # train result: 0.8516, test result: 0.8511111111111112
+
+    # visualizing tree
+    fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(6, 8), dpi=1600)
+    plot_tree(grid_search_cv.best_estimator_, feature_names=df.columns.values, filled=True, class_names=['0', '1'])
+    fig.savefig('decisionTree.png')
+
     return
+
+def decisionTree(X_train, X_test, y_train, y_test, df):
+    tree = DecisionTreeClassifier(criterion='gini',
+                                  max_depth=6, max_features=None, max_leaf_nodes=None,
+                                  min_impurity_decrease=0.0, min_impurity_split=None,
+                                  min_samples_leaf=1, min_samples_split=2,
+                                  random_state=42, splitter='random')
+    tree.fit(X_train, y_train)
+
+    print_score(tree, X_train, y_train, X_test, y_test, train=True)
+    print_score(tree, X_train, y_train, X_test, y_test, train=False)
+
+    # visualizing tree
+    fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(6, 8), dpi=1600)
+    plot_tree(tree, feature_names=df.columns.values, filled=True, class_names=['0','1'])
+    fig.savefig('decisionTree.png')
 
 def main():
     # ----- loading data -----
@@ -119,7 +142,7 @@ def main():
     # printFullRow(train_binary_encoding)
 
     # ----- correlation test (Pearson) -----
-    corrTest(train_onehot)
+    # corrTest(train_onehot)
 
     # ----- split training data -----
     # will consider k-fold cross-validation later
@@ -128,7 +151,12 @@ def main():
     # test_size is the percentage of data allocated to test
     # random_state is a seed for random sampling
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-    decisionTree(X_train, X_test, y_train, y_test)
+
+    # ----- decision tree classifier with tuned hyperparameters -----
+    # note decisionTree() uses the tuned hyperparameters from decisionTreeTuned(), therefore
+    # yields the same model
+    decisionTree(X_train, X_test, y_train, y_test, X)
+
 
 if __name__ == "__main__":
     main()
