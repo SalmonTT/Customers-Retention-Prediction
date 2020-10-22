@@ -1,4 +1,3 @@
-import sklearn
 import pandas as pd
 import matplotlib.pyplot as plt
 import category_encoders as ce
@@ -15,9 +14,11 @@ def printFullDf(df):
     pd.set_option('display.max_columns', None)
     print(df)
 
+
 def printFullRow(df):
     pd.set_option('display.max_columns', None)
     print(df)
+
 
 def corrTest(df):
     # Part 1 -----------
@@ -43,15 +44,18 @@ def corrTest(df):
     # 'IsActiveMember', 'Gender', 'Balance', 'Geography' are all moderately related
     return
 
+
 def oneHotEncoding(df):
     df = pd.get_dummies(df, columns=['Geography'])
     return df
+
 
 def binaryEncoding(df):
     # binaryEncoding is better than one-hot Encoding for features that have many values
     encoder = ce.BinaryEncoder(cols=['Geography'])
     df_binary = encoder.fit_transform(df)
     return df_binary
+
 
 def print_score(clf, X_train, y_train, X_test, y_test, train=True):
     if train:
@@ -70,19 +74,20 @@ def print_score(clf, X_train, y_train, X_test, y_test, train=True):
             f"Classification Report: \n \tPrecision: {precision_score(y_test, pred)}\n\tRecall Score: {recall_score(y_test, pred)}\n\tF1 score: {f1_score(y_test, pred)}\n")
         print(f"Confusion Matrix: \n {confusion_matrix(y_test, pred)}\n")
 
+
 def decisionTreeTuned(X_train, X_test, y_train, y_test, df):
     # Tuning the hyper-parameters
     params = {
         "criterion": ("gini", "entropy"),
         "splitter": ("best", "random"),
         "max_depth": (list(range(1, 20))),
-        "min_samples_split": [2, 3, 4],
+        "min_samples_split": list(range(10, 30)),
         "min_samples_leaf": list(range(1, 20)),
     }
 
     model = DecisionTreeClassifier(random_state=42)
     # n_jobs = -1: using all processors, cv=5: 5 cross-validation
-    grid_search_cv = GridSearchCV(model, params, scoring="accuracy", verbose=1, n_jobs=-1, cv=5)
+    grid_search_cv = GridSearchCV(model, params, scoring="accuracy", verbose=1, n_jobs=-1, cv=3)
     grid_search_cv.fit(X_train, y_train)
     print(grid_search_cv.best_params_)
     # grid.search_cv.best_estimator_ is a DecisionTreeClassifier(max_depth=6, random_state=42, splitter='random')
@@ -97,6 +102,7 @@ def decisionTreeTuned(X_train, X_test, y_train, y_test, df):
 
     return
 
+
 def decisionTree(X_train, X_test, y_train, y_test, df):
     tree = DecisionTreeClassifier(criterion='gini',
                                   max_depth=6, max_features=None, max_leaf_nodes=None,
@@ -110,8 +116,9 @@ def decisionTree(X_train, X_test, y_train, y_test, df):
 
     # visualizing tree
     fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(6, 8), dpi=1600)
-    plot_tree(tree, feature_names=df.columns.values, filled=True, class_names=['0','1'])
+    plot_tree(tree, feature_names=df.columns.values, filled=True, class_names=['0', '1'])
     fig.savefig('decisionTree.png')
+
 
 def main():
     # ----- loading data -----
@@ -122,6 +129,8 @@ def main():
 
     # -----Visualizing the distribution of the data for every feature -----
     train.hist(edgecolor='black', linewidth=1.2, figsize=(20, 20))
+    # plt.show()
+
     # --- Observations ---:
     # 'CreditScore' follows a Gausian distribution (relatively)
     # 'Age' follows Gausian distribution skewed to the left
@@ -130,6 +139,10 @@ def main():
     # 'EstimateSalary' has low variance, may not be very informative
     # 'IsActiveMember' has high entropy: about half the people are active
     # 'HasCrCard' has relatively low entropy: about 2/3 have credit card
+
+    # test if dropping 'EstimatedSalary' will improve model (since low variance)
+    # RESULT: dropping this column has little effect on the final result for decision tree
+    train.drop(['EstimatedSalary'], axis=1, inplace=True)
 
     # ----- feature engineering -----
     # change 'Gender' into numeric value
@@ -155,7 +168,7 @@ def main():
     # ----- decision tree classifier with tuned hyperparameters -----
     # note decisionTree() uses the tuned hyperparameters from decisionTreeTuned(), therefore
     # yields the same model
-    decisionTree(X_train, X_test, y_train, y_test, X)
+    decisionTreeTuned(X_train, X_test, y_train, y_test, X)
 
 
 if __name__ == "__main__":
