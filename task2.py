@@ -14,11 +14,9 @@ def printFullDf(df):
     pd.set_option('display.max_columns', None)
     print(df)
 
-
 def printFullRow(df):
     pd.set_option('display.max_columns', None)
     print(df)
-
 
 def corrTest(df):
     # Part 1 -----------
@@ -44,18 +42,15 @@ def corrTest(df):
     # 'IsActiveMember', 'Gender', 'Balance', 'Geography' are all moderately related
     return
 
-
 def oneHotEncoding(df):
     df = pd.get_dummies(df, columns=['Geography'])
     return df
-
 
 def binaryEncoding(df):
     # binaryEncoding is better than one-hot Encoding for features that have many values
     encoder = ce.BinaryEncoder(cols=['Geography'])
     df_binary = encoder.fit_transform(df)
     return df_binary
-
 
 def print_score(clf, X_train, y_train, X_test, y_test, train=True):
     if train:
@@ -73,7 +68,6 @@ def print_score(clf, X_train, y_train, X_test, y_test, train=True):
         print(
             f"Classification Report: \n \tPrecision: {precision_score(y_test, pred)}\n\tRecall Score: {recall_score(y_test, pred)}\n\tF1 score: {f1_score(y_test, pred)}\n")
         print(f"Confusion Matrix: \n {confusion_matrix(y_test, pred)}\n")
-
 
 def decisionTreeTuned(X_train, X_test, y_train, y_test, df):
     # Tuning the hyper-parameters
@@ -93,7 +87,6 @@ def decisionTreeTuned(X_train, X_test, y_train, y_test, df):
     # grid.search_cv.best_estimator_ is a DecisionTreeClassifier(max_depth=6, random_state=42, splitter='random')
     print_score(grid_search_cv.best_estimator_, X_train, y_train, X_test, y_test, train=True)
     print_score(grid_search_cv.best_estimator_, X_train, y_train, X_test, y_test, train=False)
-    # train result: 0.8516, test result: 0.8511111111111112
 
     # visualizing tree
     fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(6, 8), dpi=1600)
@@ -101,7 +94,6 @@ def decisionTreeTuned(X_train, X_test, y_train, y_test, df):
     fig.savefig('decisionTree.png')
 
     return
-
 
 def decisionTree(X_train, X_test, y_train, y_test, df):
     tree = DecisionTreeClassifier(criterion='gini',
@@ -119,17 +111,33 @@ def decisionTree(X_train, X_test, y_train, y_test, df):
     plot_tree(tree, feature_names=df.columns.values, filled=True, class_names=['0', '1'])
     fig.savefig('decisionTree.png')
 
+def useDecisionTree(df):
 
-def main():
+    # Dropping this column has little effect on the final result for decision tree,
+    # because it has low variation
+    df.drop(['EstimatedSalary'], axis=1, inplace=True)
+
+    # ----- split training data -----
+    X = df.drop(['Exited'], axis=1)
+    y = df.Exited
+    # test_size is the percentage of data allocated to test
+    # random_state is a seed for random sampling
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+    # ----- decision tree classifier with tuned hyperparameters -----
+    # note decisionTree() uses the tuned hyperparameters from decisionTreeTuned(), therefore
+    # yields the same model
+    decisionTreeTuned(X_train, X_test, y_train, y_test, X)
+
+def dataPreprocessing():
     # ----- loading data -----
     # train: 7500*13
     train = pd.read_csv('train.csv', header=0)
     # drop the RowNumber and Surname as they are not important, we keep 'CustomerId' for identification later
     train.drop(['RowNumber', 'Surname'], axis=1, inplace=True)
-
     # -----Visualizing the distribution of the data for every feature -----
     train.hist(edgecolor='black', linewidth=1.2, figsize=(20, 20))
-    # plt.show()
+    plt.show()
 
     # --- Observations ---:
     # 'CreditScore' follows a Gausian distribution (relatively)
@@ -139,10 +147,6 @@ def main():
     # 'EstimateSalary' has low variance, may not be very informative
     # 'IsActiveMember' has high entropy: about half the people are active
     # 'HasCrCard' has relatively low entropy: about 2/3 have credit card
-
-    # test if dropping 'EstimatedSalary' will improve model (since low variance)
-    # RESULT: dropping this column has little effect on the final result for decision tree
-    train.drop(['EstimatedSalary'], axis=1, inplace=True)
 
     # ----- feature engineering -----
     # change 'Gender' into numeric value
@@ -155,21 +159,16 @@ def main():
     # printFullRow(train_binary_encoding)
 
     # ----- correlation test (Pearson) -----
-    # corrTest(train_onehot)
+    corrTest(train_onehot)
 
-    # ----- split training data -----
-    # will consider k-fold cross-validation later
-    X = train_onehot.drop(['Exited'], axis=1)
-    y = train.Exited
-    # test_size is the percentage of data allocated to test
-    # random_state is a seed for random sampling
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+    return train_onehot
 
-    # ----- decision tree classifier with tuned hyperparameters -----
-    # note decisionTree() uses the tuned hyperparameters from decisionTreeTuned(), therefore
-    # yields the same model
-    decisionTreeTuned(X_train, X_test, y_train, y_test, X)
+def main():
+    # ----- Loading and Preprocessing data -----
+    train = dataPreprocessing()
 
+    # ----- Invoking models -----
+    useDecisionTree(train)
 
 if __name__ == "__main__":
     main()
