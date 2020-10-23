@@ -1,4 +1,14 @@
+### Dependencies
+Please use **Python 3.7** for this project, and install the following packages:
+```bash
+pip install pandas matplotlib category_encoders numpy sklearn tensorflow keras
+```
+tensorflow requires **numpy 1.16.0**:
+```bash
+pip install --upgrade numpy==1.16.0
+```
 # FTEC4003 Course Project Task 1: Insurance Selling
+
 ## 1. Background
 - This data comes from clients of an insurance company. These clients have already bought the medical insurance. Nowadays, the company wants to launch a new transportation insurance and to find those who will be interested in this insurance.
 ## 2. Data Set Information
