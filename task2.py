@@ -7,6 +7,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.model_selection import GridSearchCV
 
+# ----- packages for deep learning -----
+from sklearn.preprocessing import StandardScaler
+# Note that keras also requires tensorflow
+from tensorflow.keras.layers import Input, Dense
 
 def printFullDf(df):
     # prints the dataframe in full
@@ -160,6 +164,24 @@ def dataPreprocessing():
     # corrTest(train_onehot)
 
     return train_onehot
+
+def useKeras(df):
+    # ----- split training data -----
+    X = df.drop(['Exited'], axis=1)
+    y = df.Exited
+    # ----- standardizing the input features -----
+    sc = StandardScaler()
+    X = sc.fit_transform(X)
+
+    # random_state is a seed for random sampling
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    kerasModel(X_train, X_test, y_train, y_test, X)
+    return
+
+def kerasModel(X_train, X_test, y_train, y_test, df):
+
+    return
 
 def main():
     # ----- Loading and Preprocessing data -----
