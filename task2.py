@@ -74,7 +74,7 @@ def decisionTreeTuned(X_train, X_test, y_train, y_test, df):
     params = {
         "criterion": ("gini", "entropy"),
         "splitter": ("best", "random"),
-        "max_depth": (list(range(1, 20))),
+        "max_depth": (list(range(1, 10))),
         "min_samples_split": list(range(10, 30)),
         "min_samples_leaf": list(range(1, 20)),
     }
@@ -84,6 +84,8 @@ def decisionTreeTuned(X_train, X_test, y_train, y_test, df):
     grid_search_cv = GridSearchCV(model, params, scoring="accuracy", verbose=1, n_jobs=-1, cv=3)
     grid_search_cv.fit(X_train, y_train)
     print(grid_search_cv.best_params_)
+    # {'criterion': 'entropy', 'max_depth': 17, 'min_samples_leaf': 2, 'min_samples_split': 28, 'splitter': 'random'}
+
     # grid.search_cv.best_estimator_ is a DecisionTreeClassifier(max_depth=6, random_state=42, splitter='random')
     print_score(grid_search_cv.best_estimator_, X_train, y_train, X_test, y_test, train=True)
     print_score(grid_search_cv.best_estimator_, X_train, y_train, X_test, y_test, train=False)
@@ -113,10 +115,6 @@ def decisionTree(X_train, X_test, y_train, y_test, df):
 
 def useDecisionTree(df):
 
-    # Dropping this column has little effect on the final result for decision tree,
-    # because it has low variation
-    df.drop(['EstimatedSalary'], axis=1, inplace=True)
-
     # ----- split training data -----
     X = df.drop(['Exited'], axis=1)
     y = df.Exited
@@ -137,7 +135,7 @@ def dataPreprocessing():
     train.drop(['RowNumber', 'Surname'], axis=1, inplace=True)
     # -----Visualizing the distribution of the data for every feature -----
     train.hist(edgecolor='black', linewidth=1.2, figsize=(20, 20))
-    plt.show()
+    # plt.show()
 
     # --- Observations ---:
     # 'CreditScore' follows a Gausian distribution (relatively)
@@ -159,7 +157,7 @@ def dataPreprocessing():
     # printFullRow(train_binary_encoding)
 
     # ----- correlation test (Pearson) -----
-    corrTest(train_onehot)
+    # corrTest(train_onehot)
 
     return train_onehot
 
