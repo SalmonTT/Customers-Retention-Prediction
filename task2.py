@@ -73,6 +73,9 @@ def print_score(clf, X_train, y_train, X_test, y_test, train=True):
             f"Classification Report: \n \tPrecision: {precision_score(y_test, pred)}\n\tRecall Score: {recall_score(y_test, pred)}\n\tF1 score: {f1_score(y_test, pred)}\n")
         print(f"Confusion Matrix: \n {confusion_matrix(y_test, pred)}\n")
 
+def ROC(clf, X_train, y_train, X_test, y_test, train=True):
+    return
+
 def decisionTreeTuned(X_train, X_test, y_train, y_test, df):
     # Tuning the hyper-parameters
     params = {
