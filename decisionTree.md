@@ -51,3 +51,11 @@ Therefore we see that the problems with current model is as follows:
 2. *Precision could be improved*:
     - Test results hovers at low **70%** precision, which is relatively low
 
+## Things to try next:
+1. Better data pre-processing
+    - this is less important as decision tree models are less reliant on data
+2. Ensemble methods:
+    - Bagging and Boosting
+    - https://towardsdatascience.com/decision-tree-ensembles-bagging-and-boosting-266a8ba60fd9
+3. Techniques described in the documentation:
+    - https://scikit-learn.org/stable/modules/tree.html#tree 
