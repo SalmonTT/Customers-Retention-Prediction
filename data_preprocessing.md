@@ -2,7 +2,7 @@
 ### Address the data properties before building models
 
 Looking at this snapshot of the train.csv file below:
-![image info](./train_csv_snapshot.png)
+![image info](./train_csv_snapshot.PNG)
 There are a few notable problems of this dataset:
 1. RowNumber, CustomerId and Surname are redundant attributes
     - we may simply remove these
