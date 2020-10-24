@@ -155,7 +155,7 @@ def dataPreprocessing():
     train['Gender'].replace({'Male': 0, 'Female': 1}, inplace=True)
     # using the onehot method to label 'Geography'
     train_onehot = oneHotEncoding(train)
-    # print(train_onehot)
+    # printFullRow(train_onehot)
     # using the binaryEncoding method to label 'Geography'
     train_binary_encoding = binaryEncoding(train)
     # printFullRow(train_binary_encoding)
@@ -180,7 +180,7 @@ def useKeras(df):
     return
 
 def kerasModel(X_train, X_test, y_train, y_test, df):
-
+    # https://medium.com/datadriveninvestor/building-neural-network-using-keras-for-classification-3a3656c726c1
     return
 
 def main():
