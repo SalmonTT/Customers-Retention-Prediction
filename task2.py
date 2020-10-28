@@ -6,6 +6,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, r
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.model_selection import GridSearchCV
+import sklearn.metrics as metrics
 
 # ----- packages for deep learning -----
 from sklearn.preprocessing import StandardScaler
@@ -74,6 +75,39 @@ def print_score(clf, X_train, y_train, X_test, y_test, train=True):
         print(f"Confusion Matrix: \n {confusion_matrix(y_test, pred)}\n")
 
 def ROC(clf, X_train, y_train, X_test, y_test, train=True):
+    if train:
+        # predict probabilities
+        probs = clf.predict_proba(X_train)
+        # keep probabilities for the positive outcome only
+        probs = probs[:, 1]
+        fpr, tpr, threshold = metrics.roc_curve(y_train, probs)
+        roc_auc = metrics.auc(fpr, tpr)
+        plt.title('Receiver Operating Characteristic Training')
+        plt.plot(fpr, tpr, 'b', label='AUC = %0.2f' % roc_auc)
+        plt.legend(loc='lower right')
+        plt.plot([0, 1], [0, 1], 'r--')
+        plt.xlim([0, 1])
+        plt.ylim([0, 1])
+        plt.ylabel('True Positive Rate')
+        plt.xlabel('False Positive Rate')
+        plt.show()
+    else:
+        # predict probabilities
+        probs = clf.predict_proba(X_test)
+        # keep probabilities for the positive outcome only
+        probs = probs[:, 1]
+        fpr, tpr, threshold = metrics.roc_curve(y_test, probs)
+        roc_auc = metrics.auc(fpr, tpr)
+        plt.title('Receiver Operating Characteristic Testing')
+        plt.plot(fpr, tpr, 'b', label='AUC = %0.2f' % roc_auc)
+        plt.legend(loc='lower right')
+        plt.plot([0, 1], [0, 1], 'r--')
+        plt.xlim([0, 1])
+        plt.ylim([0, 1])
+        plt.ylabel('True Positive Rate')
+        plt.xlabel('False Positive Rate')
+        plt.show()
+
     return
 
 def decisionTreeTuned(X_train, X_test, y_train, y_test, df):
@@ -96,13 +130,15 @@ def decisionTreeTuned(X_train, X_test, y_train, y_test, df):
     # grid.search_cv.best_estimator_ is a DecisionTreeClassifier(max_depth=6, random_state=42, splitter='random')
     print_score(grid_search_cv.best_estimator_, X_train, y_train, X_test, y_test, train=True)
     print_score(grid_search_cv.best_estimator_, X_train, y_train, X_test, y_test, train=False)
+    ROC(grid_search_cv.best_estimator_, X_train, y_train, X_test, y_test, train=True)
+    ROC(grid_search_cv.best_estimator_, X_train, y_train, X_test, y_test, train=False)
 
     # visualizing tree
     fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(10, 10), dpi=1600)
     plot_tree(grid_search_cv.best_estimator_, feature_names=df.columns.values, filled=True, class_names=['0', '1'])
     fig.savefig('decisionTree.png')
 
-    return
+    return grid_search_cv
 
 def decisionTree(X_train, X_test, y_train, y_test, df):
     tree = DecisionTreeClassifier(criterion='gini',
@@ -114,11 +150,14 @@ def decisionTree(X_train, X_test, y_train, y_test, df):
 
     print_score(tree, X_train, y_train, X_test, y_test, train=True)
     print_score(tree, X_train, y_train, X_test, y_test, train=False)
+    ROC(tree, X_train, y_train, X_test, y_test, train=True)
+    ROC(tree, X_train, y_train, X_test, y_test, train=False)
 
     # visualizing tree
     fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(10, 10), dpi=1600)
     plot_tree(tree, feature_names=df.columns.values, filled=True, class_names=['0', '1'])
     fig.savefig('decisionTree.png')
+    return tree
 
 def useDecisionTree(df):
 
@@ -141,7 +180,7 @@ def dataPreprocessing():
     # drop the RowNumber and Surname as they are not important, we keep 'CustomerId' for identification later
     train.drop(['RowNumber', 'Surname'], axis=1, inplace=True)
     # -----Visualizing the distribution of the data for every feature -----
-    train.hist(edgecolor='black', linewidth=1.2, figsize=(20, 20))
+    # train.hist(edgecolor='black', linewidth=1.2, figsize=(20, 20))
     # plt.show()
 
     # --- Observations ---:
