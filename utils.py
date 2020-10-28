@@ -90,3 +90,4 @@ def histogram(df):
     df.hist(edgecolor='black', linewidth=1.2, figsize=(20, 20))
     plt.show()
     return
+
