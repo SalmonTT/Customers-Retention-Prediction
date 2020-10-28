@@ -27,7 +27,7 @@ def decisionTreeTuned(X_train, X_test, y_train, y_test, df):
     ROC(grid_search_cv.best_estimator_, X_train, y_train, X_test, y_test, train=False)
 
     # visualizing tree
-    fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(10, 10), dpi=1600)
+    fig, axes = plt.pyplot.subplots(nrows=1, ncols=1, figsize=(10, 10), dpi=1600)
     plot_tree(grid_search_cv.best_estimator_, feature_names=df.columns.values, filled=True, class_names=['0', '1'])
     fig.savefig('decisionTree.png')
 
@@ -47,21 +47,16 @@ def decisionTree(X_train, X_test, y_train, y_test, df):
     ROC(tree, X_train, y_train, X_test, y_test, train=False)
 
     # visualizing tree
-    fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(10, 10), dpi=1600)
+    fig, axes = plt.pyplot.subplots(nrows=1, ncols=1, figsize=(10, 10), dpi=1600)
     plot_tree(tree, feature_names=df.columns.values, filled=True, class_names=['0', '1'])
     fig.savefig('decisionTree.png')
     return tree
 
 def useDecisionTree(df):
-
     # ----- split training data -----
     X = df.drop(['Exited'], axis=1)
     y = df.Exited
-    # test_size is the percentage of data allocated to test
-    # random_state is a seed for random sampling
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # ----- decision tree classifier with tuned hyperparameters -----
-    # note decisionTree() uses the tuned hyperparameters from decisionTreeTuned(), therefore
-    # yields the same model
-    decisionTree(X_train, X_test, y_train, y_test, X)
+    model = decisionTree(X_train, X_test, y_train, y_test, X)
+    return model

@@ -23,8 +23,6 @@ def corrTest(df):
     # show the correlation heatmap
     plt.matshow(feature_corr)
     plt.show()
-    # from the corr matrix we see that most features are uncorrelated (excluding geography),
-    # with the exception of 'Balance' and 'NumOfProducts' --> Pearson value = -0.308252
 
     # Part 2 -----------
     # we test the correlation between features and output ('Exited')
@@ -32,8 +30,7 @@ def corrTest(df):
     feature_output_corr = feature_output.corr(method='pearson')
     output_corr = abs(feature_output_corr['Exited'])
     printFullDf(output_corr)
-    # 'Age' show significant correlation to output 'Exited' --> Pearson value = 0.289895
-    # 'IsActiveMember', 'Gender', 'Balance', 'Geography' are all moderately related
+
     return
 
 def print_score(clf, X_train, y_train, X_test, y_test, train=True):
@@ -87,4 +84,9 @@ def ROC(clf, X_train, y_train, X_test, y_test, train=True):
         plt.xlabel('False Positive Rate')
         plt.show()
 
+    return
+
+def histogram(df):
+    df.hist(edgecolor='black', linewidth=1.2, figsize=(20, 20))
+    plt.show()
     return
