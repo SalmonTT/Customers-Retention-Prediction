@@ -58,5 +58,5 @@ def useDecisionTree(df):
     y = df.Exited
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    model = decisionTree(X_train, X_test, y_train, y_test, X)
+    model = decisionTreeTuned(X_train, X_test, y_train, y_test, X)
     return model
