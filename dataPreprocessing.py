@@ -1,7 +1,7 @@
 import pandas as pd
 import category_encoders as ce
-from utils import histogram, corrTest
-
+from utils import histogram, corrTest, printFullRow
+import matplotlib as plt
 
 def oneHotEncoding(df):
     df = pd.get_dummies(df, columns=['Geography'])
@@ -15,7 +15,7 @@ def binaryEncoding(df):
     return df_binary
 
 
-def getTrainingData(filename):
+def getTrainingData(filename, visualize=False):
     # ----- loading data -----
     train = pd.read_csv(filename, header=0)
     # Task 2
@@ -24,12 +24,17 @@ def getTrainingData(filename):
         train.drop(['RowNumber', 'Surname', 'CustomerId'], axis=1, inplace=True)
         train['Gender'].replace({'Male': 0, 'Female': 1}, inplace=True)
         train = oneHotEncoding(train)
+
     # Task 1
     else:
         print("preprocessing insurance-train.csv")
-
-    # ----- visualize data -----
-    # histogram(train)
-    # ----- correlation analysis -----
-    # corrTest(train)
+    if visualize:
+        # ----- Describe data -----
+        desc = train.describe()
+        printFullRow(desc)
+        # ----- visualize data -----
+        train.hist(figsize=(15,15))
+        plt.show()
+        # ----- correlation analysis -----
+        # corrTest(train)
     return train
