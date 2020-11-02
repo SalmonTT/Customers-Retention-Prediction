@@ -1,6 +1,6 @@
 import pandas as pd
 import category_encoders as ce
-from utils import histogram, corrTest, printFullRow
+from utils import *
 import matplotlib as plt
 
 def oneHotEncoding(df):
@@ -28,13 +28,13 @@ def getTrainingData(filename, visualize=False):
     # Task 1
     else:
         print("preprocessing insurance-train.csv")
+
+    # ----- visualize data -----
     if visualize:
-        # ----- Describe data -----
-        desc = train.describe()
-        printFullRow(desc)
-        # ----- visualize data -----
-        train.hist(figsize=(15,15))
-        plt.show()
+        # ----- description -----
+        # description(train)
+        # ----- histogram -----
+        # histogram(train)
         # ----- correlation analysis -----
-        # corrTest(train)
+        corrAnalysis(train)
     return train
