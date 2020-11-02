@@ -7,9 +7,9 @@ from dataPreprocessing import getTrainingData
 
 def main():
     # ----- Part 1: Data Pre-processing ----- #
-    train = getTrainingData("train.csv", visualize=True)
+    train = getTrainingData("train.csv", visualize=False)
     # ----- Part 2: Model Training ----- #
-    # useDecisionTree(train)
+    useDecisionTree(train)
 
 
 
