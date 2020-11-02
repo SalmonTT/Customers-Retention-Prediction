@@ -1,4 +1,5 @@
-from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.tree import DecisionTreeClassifier, plot_tree, export_graphviz
+import graphviz
 from sklearn.model_selection import GridSearchCV, train_test_split
 import matplotlib as plt
 from utils import print_score, ROC
@@ -27,9 +28,15 @@ def decisionTreeTuned(X_train, X_test, y_train, y_test, df):
     ROC(grid_search_cv.best_estimator_, X_train, y_train, X_test, y_test, train=False)
 
     # visualizing tree
-    fig, axes = plt.pyplot.subplots(nrows=1, ncols=1, figsize=(10, 10), dpi=1600)
-    plot_tree(grid_search_cv.best_estimator_, feature_names=df.columns.values, filled=True, class_names=['0', '1'])
-    fig.savefig('decisionTree.png')
+    export_graphviz(grid_search_cv, out_file='tree.dot',
+                    feature_names=df.columns.values,
+                    class_names=['0', '1'], rounded=True,
+                    proportion=True, label='root',
+                    precision=2, filled=True)
+    with open("tree.dot") as f:
+        dot_graph = f.read()
+    graphviz.Source(dot_graph)
+    # http://www.webgraphviz.com/
 
     return grid_search_cv
 
@@ -47,9 +54,15 @@ def decisionTree(X_train, X_test, y_train, y_test, df):
     ROC(tree, X_train, y_train, X_test, y_test, train=False)
 
     # visualizing tree
-    fig, axes = plt.pyplot.subplots(nrows=1, ncols=1, figsize=(10, 10), dpi=1600)
-    plot_tree(tree, feature_names=df.columns.values, filled=True, class_names=['0', '1'])
-    fig.savefig('decisionTree.png')
+    export_graphviz(tree, out_file='tree.dot',
+                    feature_names=df.columns.values,
+                    class_names=['0', '1'], rounded=True,
+                    proportion=True, label='root',
+                    precision=2, filled=True)
+    with open("tree.dot") as f:
+        dot_graph = f.read()
+    graphviz.Source(dot_graph)
+    # http://www.webgraphviz.com/
     return tree
 
 def useDecisionTree(df):
@@ -58,5 +71,5 @@ def useDecisionTree(df):
     y = df.Exited
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    model = decisionTreeTuned(X_train, X_test, y_train, y_test, X)
+    model = decisionTree(X_train, X_test, y_train, y_test, X)
     return model
