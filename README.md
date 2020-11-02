@@ -8,7 +8,8 @@ tensorflow requires **numpy 1.16.0**:
 pip install --upgrade numpy==1.16.0
 ```
 # FTEC4003 Course Project Task 1: Insurance Selling
-
+Note that the following models will be implemented: (DecisionTree, k-Nearest Neighbor,
+Bayes, SVM and Ensemble Method) Compare the best two models in the report. (best model determined by .exe file)
 ## 1. Background
 - This data comes from clients of an insurance company. These clients have already bought the medical insurance. Nowadays, the company wants to launch a new transportation insurance and to find those who will be interested in this insurance.
 ## 2. Data Set Information
