@@ -19,7 +19,7 @@ def kerasModel(X_train, X_test, y_train, y_test, df):
     classifier.fit(X_train, y_train, batch_size=10, epochs=100)
 
     eval_model = classifier.evaluate(X_train, y_train)
-    print(eval_model)
+    # print(eval_model)
     y_pred = classifier.predict(X_test)
     y_pred = (y_pred > 0.5)
     cm = confusion_matrix(y_test, y_pred)
