@@ -7,18 +7,19 @@ import pandas as pd
 
 def main():
     # ----- Part 1: Data Pre-processing ----- #
-    train = getTrainingData("train.csv", visualize=False)
+    train = getTrainingData('train.csv', visualize=False)
     # ----- Part 2: data splitting ----- #
     if 'Exited' in train.columns: # task 2
         X = train.drop(['Exited'], axis=1)
+        # X = StandardScaler().fit_transform(X)
         y = train.Exited
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     else:
         print("splitting for task 1")
+
     # ----- Part 3: comparing all models ----- #
     models = [
-        ('tree', decisionTree()),
-        ('keras', kerasModel())
+        ('tree', decisionTree())
     ]
     scoring = ['accuracy', 'precision_weighted', 'recall_weighted', 'f1_weighted', 'roc_auc']
     # ----- Part 4: output test result ----- #
