@@ -10,7 +10,7 @@ def decisionTree():
                                   max_depth=7, max_features=None, max_leaf_nodes=None,
                                   min_impurity_decrease=0.0, min_impurity_split=None,
                                   min_samples_leaf=1, min_samples_split=2,
-                                  random_state=42, splitter='random')
+                                  random_state=42, splitter='best')
     return tree
 
 def visualizeTree(tree, df):
@@ -29,10 +29,11 @@ def decisionTreeTuning():
     # Parameter estimation using grid search with cross-validation
     # https://scikit-learn.org/stable/auto_examples/model_selection/plot_grid_search_digits.html#sphx-glr-auto-examples-model-selection-plot-grid-search-digits-py
     train = getTrainingData('Train.csv', visualize=False)
+
     X = train.drop(['Exited'], axis=1)
     y = train.Exited
     # split training data half half
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=0)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
     params = {
         "criterion": ("gini", "entropy"),
         "splitter": ("best", "random"),
@@ -41,14 +42,23 @@ def decisionTreeTuning():
         "min_samples_leaf": list(range(1, 20)),
     }
     # To obtain a deterministic behaviour during fitting, we set random_state to a fixed int
-    model = DecisionTreeClassifier(random_state=0)
-    grid_search_cv = GridSearchCV(model, params, scoring="accuracy", verbose=1, n_jobs=-1, cv=3)
-    print(grid_search_cv.best_params_)
-    grid_search_cv.fit(X_train, y_train)
-    print_score(grid_search_cv, X_train, y_train, X_test, y_test, train=True)
-    print_score(grid_search_cv, X_train, y_train, X_test, y_test, train=False)
-    ROC(grid_search_cv, X_train, y_train, X_test, y_test, train=True)
-    ROC(grid_search_cv, X_train, y_train, X_test, y_test, train=False)
-    visualizeTree(grid_search_cv, train)
-
-decisionTreeTuning()
+    tree = DecisionTreeClassifier(criterion='gini',
+                                  max_depth=7, max_features=None, max_leaf_nodes=None,
+                                  min_impurity_decrease=0.0, min_impurity_split=None,
+                                  min_samples_leaf=1, min_samples_split=2,
+                                  random_state=42, splitter='random')
+    tree.fit(X_train, y_train)
+    print_score(tree, X_train, y_train, X_test, y_test, train=True)
+    print_score(tree, X_train, y_train, X_test, y_test, train=False)
+    ROC(tree, X_train, y_train, X_test, y_test, train=True)
+    ROC(tree, X_train, y_train, X_test, y_test, train=False)
+    visualizeTree(tree, X)
+    # model = DecisionTreeClassifier(random_state=0)
+    # grid_search_cv = GridSearchCV(model, params, scoring="accuracy", verbose=1, n_jobs=-1, cv=3)
+    # grid_search_cv.fit(X_train, y_train)
+    # print_score(grid_search_cv, X_train, y_train, X_test, y_test, train=True)
+    # print_score(grid_search_cv, X_train, y_train, X_test, y_test, train=False)
+    # ROC(grid_search_cv, X_train, y_train, X_test, y_test, train=True)
+    # ROC(grid_search_cv, X_train, y_train, X_test, y_test, train=False)
+    # visualizeTree(grid_search_cv, X)
+    return
