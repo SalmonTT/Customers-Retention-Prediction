@@ -1,6 +1,6 @@
 import category_encoders as ce
 from utils import *
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder, StandardScaler, MinMaxScaler, Normalizer
 
 def oneHotEncoding(df, task):
     if task == 2:
@@ -27,6 +27,26 @@ def binaryEncoding(df):
 def discretization(df):
 
     return df
+
+def standard(df):
+    # Standardization, or mean removal and variance scaling
+    scale = StandardScaler().fit(df)
+    df = scale.transform(df)
+    return df
+
+def scaling(df):
+    # Scaling features to a range
+    min_max_scaler = MinMaxScaler().fit(df)
+    df = min_max_scaler.transform(df)
+    return df
+
+def normalization(df):
+    # Normalization is the process of scaling individual samples to have unit norm
+    # The L2-norm is the usual Euclidean length, i.e. the square root of the sum of the squared vector elements.
+    # The L1-norm is the sum of the absolute values of the vector elements.
+    # Default setting is L2-norm
+    normalizer = Normalizer().fit(df)
+    df = normalizer.transform(df)
 
 def getTrainingData(filename, visualize=False):
     # ----- loading data -----
