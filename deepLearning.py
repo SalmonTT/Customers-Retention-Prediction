@@ -18,6 +18,7 @@ def kerasModel(X_train, X_test, y_train, y_test, df):
     # Fitting the data to the training dataset
     classifier.fit(X_train, y_train, batch_size=10, epochs=100)
 
+    # loss and accuracy
     eval_model = classifier.evaluate(X_train, y_train)
     # print(eval_model)
     y_pred = classifier.predict(X_test)
