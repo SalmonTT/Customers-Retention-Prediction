@@ -1,11 +1,22 @@
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 from dataPreprocessing import *
 from utils import *
 
 def randomForest(X_train, X_test, y_train, y_test):
-    rf = RandomForestClassifier(n_estimators=100, criterion = 'gini', max_samples=0.5,
-                               max_depth = 10, random_state=42)
+    # Parameter tuning
+    # model = RandomForestClassifier()
+    # params = {'max_depth': [5,10,15,20],
+    #          'min_samples_leaf': [2,4,6,8],
+    #          'min_samples_split': [2,4],
+    #          'n_estimators': [120, 140, 200]}
+    #
+    # grid_search_cv = GridSearchCV(model, params, verbose=1, n_jobs=-1, cv=3, scoring='accuracy')
+    # grid_search_cv.fit(X_train, y_train)
+    # best_grid = grid_search_cv.best_estimator_
+
+    # tuned with the best parameters
+    rf = RandomForestClassifier(max_depth=10, min_samples_leaf=4, n_estimators=140, random_state=42)
     rf.fit(X_train, y_train)
     print_score(rf, X_train, y_train, X_test, y_test, train=True)
     print_score(rf, X_train, y_train, X_test, y_test, train=False)

@@ -3,12 +3,12 @@ from tensorflow.keras.layers import Dense
 from keras import Sequential
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, f1_score
-
+from dataPreprocessing import *
 def kerasModel(X_train, X_test, y_train, y_test, df):
     # https://medium.com/datadriveninvestor/building-neural-network-using-keras-for-classification-3a3656c726c1
     classifier = Sequential()
     # First Hidden Layer
-    classifier.add(Dense(6, activation='relu', kernel_initializer='random_normal', input_dim=12))
+    classifier.add(Dense(6, activation='relu', kernel_initializer='random_normal', input_dim=14))
     # Second  Hidden Layer
     classifier.add(Dense(6, activation='relu', kernel_initializer='random_normal'))
     # Output Layer
@@ -46,3 +46,8 @@ def useKeras(df):
     kerasModel(X_train, X_test, y_train, y_test, X)
     return
 
+def tune():
+    df = getTrainingData('Train.csv', False)
+    useKeras(df)
+
+tune()

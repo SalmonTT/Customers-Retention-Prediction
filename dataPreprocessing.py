@@ -4,6 +4,8 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler, MinMaxScaler, N
 
 def oneHotEncoding(df, task):
     if task == 2:
+        # need to discretize NumOfProducts
+        # might also need to discretize Balance
         cat_df = df[['Geography', 'Gender', 'IsActiveMember']]
         df = df.drop(['Geography', 'Gender', 'IsActiveMember'], axis=1)
         X = cat_df.to_numpy()
@@ -47,6 +49,7 @@ def normalization(df):
     # Default setting is L2-norm
     normalizer = Normalizer().fit(df)
     df = normalizer.transform(df)
+    return df
 
 def getTrainingData(filename, visualize=False):
     # ----- loading data -----
@@ -68,4 +71,9 @@ def getTrainingData(filename, visualize=False):
         histogram(train)
         # ----- correlation analysis -----
         corrAnalysis(train)
+    return train
+
+def simpleGetData(filename):
+    train = pd.read_csv(filename, header=0)
+    train.drop(['RowNumber', 'Surname', 'CustomerId'], axis=1, inplace=True)
     return train
