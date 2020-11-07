@@ -66,17 +66,17 @@ def ROC(clf, X_train, y_train, X_test, y_test, train=True):
 
     return
 
-def description(data):
-    desc = data.describe()
+def description(df):
+    desc = df.describe()
     printFullRow(desc)
 
-def histogram(data):
-    data.hist(figsize=(20, 20))
+def histogram(df):
+    df.hist(figsize=(20, 20))
     plt.show()
 
-def corrAnalysis(data):
+def corrAnalysis(df):
     # corr matrix
-    corrmat = data.corr()
+    corrmat = df.corr()
     plt.figure(figsize=(10,10))
     sns.heatmap(corrmat, cmap='viridis', annot=True, linewidths=0.5)
     plt.show()

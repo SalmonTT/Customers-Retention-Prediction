@@ -7,7 +7,7 @@ import pandas as pd
 
 def main():
     # ----- Part 1: Data Pre-processing ----- #
-    train = getTrainingData('train.csv', visualize=False)
+    train = getTrainingData('train.csv', visualize=True)
     # ----- Part 2: data splitting ----- #
     if 'Exited' in train.columns: # task 2
         X = train.drop(['Exited'], axis=1)
