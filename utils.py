@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc, accuracy_score, confusion_matrix, precision_score, recall_score, f1_score
+import seaborn as sns
 
 def printFullDf(df):
     # prints the dataframe in full
@@ -11,27 +12,6 @@ def printFullDf(df):
 def printFullRow(df):
     pd.set_option('display.max_columns', None)
     print(df)
-
-def corrTest(df):
-    # Part 1 -----------
-    # Test the correlation between attributes/features (attributes and features will be used interchangeably):
-    # drop the following column from dataframe
-    feature = df.drop(['CustomerId', 'Exited'], axis=1)
-    feature_corr = feature.corr(method='pearson')
-    # print the correlation matrix
-    printFullDf(feature_corr)
-    # show the correlation heatmap
-    plt.matshow(feature_corr)
-    plt.show()
-
-    # Part 2 -----------
-    # we test the correlation between features and output ('Exited')
-    feature_output = df.drop(['CustomerId'], axis=1)
-    feature_output_corr = feature_output.corr(method='pearson')
-    output_corr = abs(feature_output_corr['Exited'])
-    printFullDf(output_corr)
-
-    return
 
 def print_score(clf, X_train, y_train, X_test, y_test, train=True):
     if train:
@@ -86,8 +66,17 @@ def ROC(clf, X_train, y_train, X_test, y_test, train=True):
 
     return
 
-def histogram(df):
-    df.hist(edgecolor='black', linewidth=1.2, figsize=(20, 20))
-    plt.show()
-    return
+def description(df):
+    desc = df.describe()
+    printFullRow(desc)
 
+def histogram(df):
+    df.hist(figsize=(20, 20))
+    plt.show()
+
+def corrAnalysis(df):
+    # corr matrix
+    corrmat = df.corr()
+    plt.figure(figsize=(10,10))
+    sns.heatmap(corrmat, cmap='viridis', annot=True, linewidths=0.5)
+    plt.show()
