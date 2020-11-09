@@ -10,7 +10,7 @@ def oneHotEncoding(df, task):
         df = df.drop(['Geography', 'Gender', 'IsActiveMember'], axis=1)
         X = cat_df.to_numpy()
         enc = OneHotEncoder().fit(X)
-        enc_array =  enc.transform(X).toarray()
+        enc_array = enc.transform(X).toarray()
         enc_df = pd.DataFrame(data=enc_array, columns=['France', 'Germany', 'Spain', 'Female', 'Male', 'NotActive',
         'Active'])
         result = pd.concat([df, enc_df], axis=1)
