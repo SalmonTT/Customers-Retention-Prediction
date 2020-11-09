@@ -1,8 +1,5 @@
-from decisionTree import *
 from deepLearning import *
-from dataPreprocessing import getTrainingData
-
-
+from deepLearning import *
 
 
 def main():

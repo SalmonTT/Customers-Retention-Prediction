@@ -1,10 +1,14 @@
 import pandas as pd
 import category_encoders as ce
 from utils import histogram, corrTest
-
+from sklearn.decomposition import PCA
 
 def oneHotEncoding(df):
-    df = pd.get_dummies(df, columns=['Geography'])
+    if task ==2;
+    #df = pd.get_dummies(df, columns=['Geography'])
+    df = pd.read_csv(train)
+    pca = PCA(n_components='mle') #reducing dimensions according to MLE algorithm
+    df = pca.fit_transform(train) #return variances after reducing
     return df
 
 
