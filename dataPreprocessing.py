@@ -4,12 +4,12 @@ from sklearn.decomposition import PCA
 from utils import *
 from sklearn.preprocessing import OneHotEncoder, StandardScaler, MinMaxScaler, Normalizer
 
-def pca(df):
-    if task ==2;
+def pca(df, task):
+    if task == 2 :
     #df = pd.get_dummies(df, columns=['Geography'])
-    df = pd.read_csv(train)
-    pca = PCA(n_components='mle') #reducing dimensions according to MLE algorithm
-    df = pca.fit_transform(train) #return variances after reducing
+        df = pd.read_csv(df)
+        pca = PCA(n_components='mle') #reducing dimensions according to MLE algorithm
+        df = pca.fit_transform(df) #return variances after reducing
     return df
 
 def oneHotEncoding(df, task):
