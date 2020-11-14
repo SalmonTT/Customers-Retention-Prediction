@@ -42,7 +42,7 @@ Note that the confusion matrix is organized like so in Python:
 
 |   | Predicted Negative  |Predicted Positive   |
 |---|---|---|
-| **Actual Negative**  |  True Negative | True Positive  |
+| **Actual Negative**  |  True Negative | False Positive  |
 |  **Actual Positive** |  False Negative | True Positive  |
 
 Therefore we see that the problems with current model is as follows:
