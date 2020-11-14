@@ -5,8 +5,8 @@ from utils import *
 from sklearn.preprocessing import OneHotEncoder, StandardScaler, MinMaxScaler, Normalizer
 
 def pca(df, task):
-    if task == 2 :
-    #df = pd.get_dummies(df, columns=['Geography'])
+    if task ==2:
+        #df = pd.get_dummies(df, columns=['Geography'])
         df = pd.read_csv(df)
         pca = PCA(n_components='mle') #reducing dimensions according to MLE algorithm
         df = pca.fit_transform(df) #return variances after reducing
@@ -37,7 +37,12 @@ def binaryEncoding(df):
     return df_binary
 
 def discretization(df):
-
+    # discretize balance:
+    df['BalanceTop'] = df['Balance'].apply(lambda x: 1 if x > 128208 else 0)
+    df['Balance0'] = df['Balance'].apply(lambda x: 1 if x > 0 else 0)
+    df['BalanceMid'] = df['Balance'].apply(lambda x: 1 if x > 98196 else 0)
+    df['BalanceLow'] = df['Balance'].apply(lambda x: 1 if x < 98196 else 0)
+    df.drop(['Balance'], axis=1, inplace=True)
     return df
 
 def standard(df):
@@ -61,7 +66,7 @@ def normalization(df):
     df = normalizer.transform(df)
     return df
 
-def getTrainingData(filename, visualize=False):
+def getTrainingData(filename, visualize=False, discrete=True, encoding=True):
     # ----- loading data -----
     train = pd.read_csv(filename, header=0)
     # Task 1
@@ -71,7 +76,10 @@ def getTrainingData(filename, visualize=False):
     else:
         # drop the RowNumber, CustomerId and Surname as they are not important
         train.drop(['RowNumber', 'Surname', 'CustomerId'], axis=1, inplace=True)
-        train = oneHotEncoding(train, 2)
+        if discrete:
+            train = discretization(train)
+        if encoding:
+            train = oneHotEncoding(train, 2)
 
     # ----- visualize data -----
     if visualize:
@@ -81,6 +89,7 @@ def getTrainingData(filename, visualize=False):
         histogram(train)
         # ----- correlation analysis -----
         corrAnalysis(train)
+        print(len(train[train['Exited'] == 1]))
     return train
 
 def simpleGetData(filename):
