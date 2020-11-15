@@ -1,13 +1,16 @@
-import category_encoders as ce
-
+import task as task
 from sklearn.decomposition import PCA
-from utils import *
+from tensorflow._api.v2 import train
 from sklearn.preprocessing import OneHotEncoder, StandardScaler, MinMaxScaler, Normalizer
+import pandas as pd
+#from sklearn.preprocessing import CategoricalEncoder as ce
+#import category_encoders as ce
+from FTEC4003.utils import printFullRow
+
 
 def pca(df):
-    if task ==2;
-    #df = pd.get_dummies(df, columns=['Geography'])
-    df = pd.read_csv(train)
+    if task ==2:
+        df = pd.read_csv(train)
     pca = PCA(n_components='mle') #reducing dimensions according to MLE algorithm
     df = pca.fit_transform(train) #return variances after reducing
     return df
@@ -30,11 +33,11 @@ def oneHotEncoding(df, task):
     return result
 
 
-def binaryEncoding(df):
+#def binaryEncoding(df):
     # binaryEncoding is better than one-hot Encoding for features that have many values
-    encoder = ce.BinaryEncoder(cols=['Geography'])
-    df_binary = encoder.fit_transform(df)
-    return df_binary
+    #encoder = ce.BinaryEncoder(cols=['Geography'])
+    #df_binary = encoder.fit_transform(df)
+    #return df_binary
 
 def discretization(df):
 
@@ -74,14 +77,14 @@ def getTrainingData(filename, visualize=False):
         train = oneHotEncoding(train, 2)
 
     # ----- visualize data -----
-    if visualize:
-        # ----- description -----
-        description(train)
+    #if visualize:
+         #----- description -----
+        #description(train)
         # ----- histogram -----
-        histogram(train)
+        #histogram(train)
         # ----- correlation analysis -----
-        corrAnalysis(train)
-    return train
+        #corrAnalysis(train)
+    #return train
 
 def simpleGetData(filename):
     train = pd.read_csv(filename, header=0)

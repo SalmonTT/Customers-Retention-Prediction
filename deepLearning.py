@@ -3,7 +3,11 @@ from tensorflow.keras.layers import Dense
 from keras import Sequential
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, f1_score
-from dataPreprocessing import *
+from FTEC4003.dataPreprocessing  import *
+
+from FTEC4003.dataPreprocessing import getTrainingData
+
+
 def kerasModel(X_train, X_test, y_train, y_test, df):
     # https://medium.com/datadriveninvestor/building-neural-network-using-keras-for-classification-3a3656c726c1
     classifier = Sequential()

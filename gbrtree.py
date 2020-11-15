@@ -1,10 +1,12 @@
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from dataPreprocessing import *
-from utils import *
 
 #not tuned yet
+from FTEC4003.dataPreprocessing import getTrainingData
+from FTEC4003.utils import print_score, ROC
+
+
 def gbrtree(X_train, X_test, y_train, y_test):
     gbr = GradientBoostingRegressor(n_estimators=100, max_depth=10, random_state = 42)
     gbr.fit(X_train, y_train)

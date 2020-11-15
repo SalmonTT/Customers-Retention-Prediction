@@ -1,8 +1,8 @@
 
 
-from decisionTree import decisionTree
-from deepLearning import *
-from dataPreprocessing import getTrainingData
+from FTEC4003.decisionTree import decisionTree
+from FTEC4003.deepLearning import *
+from FTEC4003.dataPreprocessing import getTrainingData
 from sklearn import model_selection
 from sklearn.metrics import classification_report
 import pandas as pd
