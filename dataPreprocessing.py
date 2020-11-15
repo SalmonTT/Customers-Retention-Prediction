@@ -21,6 +21,7 @@ def oneHotEncoding(df, task):
         enc_array = enc.transform(X).toarray()
         enc_df = pd.DataFrame(data=enc_array, columns=['France', 'Germany', 'Spain', 'Female', 'Male', 'NotActive',
         'Active'])
+        # enc_df = pd.DataFrame(data=enc_array, columns=['France', 'Germany', 'Female', 'NotActive'])
         result = pd.concat([df, enc_df], axis=1)
         printFullRow(result)
     else:
@@ -38,11 +39,12 @@ def discretization(df):
     df.drop(['Balance'], axis=1, inplace=True)
     return df
 
-def standard(df):
+def standard(X_train, X_test):
     # Standardization, or mean removal and variance scaling
-    scale = StandardScaler().fit(df)
-    df = scale.transform(df)
-    return df
+    scale = StandardScaler().fit(X_train)
+    X_train = scale.transform(X_train)
+    X_test = scale.transform(X_test)
+    return X_train, X_test
 
 def scaling(df):
     # Scaling features to a range
@@ -83,6 +85,7 @@ def getTrainingData(filename, visualize=False, discrete=True, encoding=True):
         # ----- correlation analysis -----
         corrAnalysis(train)
         print(len(train[train['Exited'] == 1]))
+    # return train.drop(columns=['Spain', 'Female', 'NotActive'])
     return train
 
 def simpleGetData(filename):
