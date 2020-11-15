@@ -1,11 +1,11 @@
 from sklearn import neighbors
 from dataPreprocessing import getTrainingData
 from sklearn.model_selection import train_test_split, GridSearchCV
-from utils import print_score, ROC
+from utils import print_score, ROC, printFullRow
 from sklearn.preprocessing import StandardScaler
 import pandas as pd
 import numpy as np
-from utils import printFullRow
+
 
 def knnTuning():
     train = getTrainingData('train.csv', visualize=False)

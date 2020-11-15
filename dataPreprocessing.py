@@ -1,18 +1,17 @@
-import task as task
+
 from sklearn.decomposition import PCA
 from tensorflow._api.v2 import train
 from sklearn.preprocessing import OneHotEncoder, StandardScaler, MinMaxScaler, Normalizer
 import pandas as pd
-#from sklearn.preprocessing import CategoricalEncoder as ce
-#import category_encoders as ce
 from FTEC4003.utils import printFullRow
 
 
-def pca(df):
+def pca(df, task):
     if task ==2:
-        df = pd.read_csv(train)
-    pca = PCA(n_components='mle') #reducing dimensions according to MLE algorithm
-    df = pca.fit_transform(train) #return variances after reducing
+        #df = pd.get_dummies(df, columns=['Geography'])
+        df = pd.read_csv(df)
+        pca = PCA(n_components='mle') #reducing dimensions according to MLE algorithm
+        df = pca.fit_transform(df) #return variances after reducing
     return df
 
 def oneHotEncoding(df, task):
@@ -26,6 +25,7 @@ def oneHotEncoding(df, task):
         enc_array = enc.transform(X).toarray()
         enc_df = pd.DataFrame(data=enc_array, columns=['France', 'Germany', 'Spain', 'Female', 'Male', 'NotActive',
         'Active'])
+        # enc_df = pd.DataFrame(data=enc_array, columns=['France', 'Germany', 'Female', 'NotActive'])
         result = pd.concat([df, enc_df], axis=1)
         printFullRow(result)
     else:
@@ -33,21 +33,21 @@ def oneHotEncoding(df, task):
     return result
 
 
-#def binaryEncoding(df):
-    # binaryEncoding is better than one-hot Encoding for features that have many values
-    #encoder = ce.BinaryEncoder(cols=['Geography'])
-    #df_binary = encoder.fit_transform(df)
-    #return df_binary
-
 def discretization(df):
-
+    # discretize balance:
+    df['BalanceTop'] = df['Balance'].apply(lambda x: 1 if x > 128208 else 0)
+    df['Balance0'] = df['Balance'].apply(lambda x: 1 if x > 0 else 0)
+    df['BalanceMid'] = df['Balance'].apply(lambda x: 1 if x > 98196 else 0)
+    df['BalanceLow'] = df['Balance'].apply(lambda x: 1 if x < 98196 else 0)
+    df.drop(['Balance'], axis=1, inplace=True)
     return df
 
-def standard(df):
+def standard(X_train, X_test):
     # Standardization, or mean removal and variance scaling
-    scale = StandardScaler().fit(df)
-    df = scale.transform(df)
-    return df
+    scale = StandardScaler().fit(X_train)
+    X_train = scale.transform(X_train)
+    X_test = scale.transform(X_test)
+    return X_train, X_test
 
 def scaling(df):
     # Scaling features to a range
@@ -64,7 +64,7 @@ def normalization(df):
     df = normalizer.transform(df)
     return df
 
-def getTrainingData(filename, visualize=False):
+def getTrainingData(filename, visualize=False, discrete=True, encoding=True):
     # ----- loading data -----
     train = pd.read_csv(filename, header=0)
     # Task 1
@@ -74,7 +74,10 @@ def getTrainingData(filename, visualize=False):
     else:
         # drop the RowNumber, CustomerId and Surname as they are not important
         train.drop(['RowNumber', 'Surname', 'CustomerId'], axis=1, inplace=True)
-        train = oneHotEncoding(train, 2)
+        if discrete:
+            train = discretization(train)
+        if encoding:
+            train = oneHotEncoding(train, 2)
 
     # ----- visualize data -----
     #if visualize:
@@ -84,7 +87,11 @@ def getTrainingData(filename, visualize=False):
         #histogram(train)
         # ----- correlation analysis -----
         #corrAnalysis(train)
-    #return train
+        corrAnalysis(train)
+        print(len(train[train['Exited'] == 1]))
+    # return train.drop(columns=['Spain', 'Female', 'NotActive'])
+    return train
+
 
 def simpleGetData(filename):
     train = pd.read_csv(filename, header=0)
