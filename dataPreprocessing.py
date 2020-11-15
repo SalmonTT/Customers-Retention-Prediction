@@ -1,5 +1,3 @@
-import category_encoders as ce
-
 from sklearn.decomposition import PCA
 from utils import *
 from sklearn.preprocessing import OneHotEncoder, StandardScaler, MinMaxScaler, Normalizer
@@ -30,11 +28,6 @@ def oneHotEncoding(df, task):
     return result
 
 
-def binaryEncoding(df):
-    # binaryEncoding is better than one-hot Encoding for features that have many values
-    encoder = ce.BinaryEncoder(cols=['Geography'])
-    df_binary = encoder.fit_transform(df)
-    return df_binary
 
 def discretization(df):
     # discretize balance:
