@@ -2,11 +2,11 @@ import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from tensorflow.python import keras
-from keras.layers import Input, Dense, SimpleRNN, RNN
-from keras.models import Model
-from keras.preprocessing import sequence
+from tensorflow.keras.layers import Input, Dense, SimpleRNN, RNN
+from tensorflow.keras.models import Model
+from tensorflow.keras.preprocessing import sequence
 
-from FTEC4003.dataPreprocessing import getTrainingData
+from dataPreprocessing import getTrainingData
 
 
 def rnn(X_train, X_test, y_train, y_test):

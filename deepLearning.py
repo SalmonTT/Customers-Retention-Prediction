@@ -2,28 +2,10 @@ from tensorflow.keras.layers import Dense    #for Dense layers
 from tensorflow.keras.models import Sequential #for sequential implementation
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, f1_score
-from FTEC4003.dataPreprocessing  import *
-
-from FTEC4003.dataPreprocessing import getTrainingData
-
-
-def kerasModel(X_train, X_test, y_train, y_test, df):
+from dataPreprocessing import *
+from dataPreprocessing import getTrainingData
 from dataPreprocessing import *
 from sklearn.decomposition import PCA
-
-import tensorflow as tf
-from tensorflow import keras
-
-import os
-import tempfile
-
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-import seaborn as sns
-
-import sklearn
 from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import StandardScaler
 
@@ -55,7 +37,7 @@ def useKeras(df):
     # ----- random_state is a seed for random sampling -----
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
     # ---- PCA ------
-    pca = PCA(0.95)
+    pca = PCA(n_components='mle')
     X_train = pca.fit_transform(X_train)
     X_test = pca.transform(X_test)
     # ----- building the model -----
@@ -78,8 +60,8 @@ def useKeras(df):
     print("Precision score: ", precision_score(y_test, y_pred))
     print("Recall score: ", recall_score(y_test, y_pred))
     print("F1 score: ", f1_score(y_test, y_pred))
-    ROC(model, X_train, y_train, X_test, y_test, train=True)
-    ROC(model, X_train, y_train, X_test, y_test, train=False)
+
+
 
     return
 
