@@ -62,3 +62,5 @@ def decisionTreeTuning():
     # ROC(grid_search_cv, X_train, y_train, X_test, y_test, train=False)
     # visualizeTree(grid_search_cv, X)
     return
+
+decisionTreeTuning()

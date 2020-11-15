@@ -14,9 +14,12 @@ def multilayerNeuralNetwork(X_train, X_test, y_train, y_test):
 def useMultilayerNeuralNetwork():
     train = getTrainingData('train.csv', visualize=False)
     X = train.drop(['Exited'], axis=1)
-    standard(X)
+    # standard(X)
     y = train.Exited
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+    scale = StandardScaler().fit(X_train)
+    X_train = scale.transform(X_train)
+    X_test = scale.transform(X_test)
     multilayerNeuralNetwork(X_train, X_test, y_train, y_test)
 
 useMultilayerNeuralNetwork()
