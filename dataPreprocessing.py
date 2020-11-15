@@ -1,6 +1,10 @@
+
 from sklearn.decomposition import PCA
-from utils import *
+from tensorflow._api.v2 import train
 from sklearn.preprocessing import OneHotEncoder, StandardScaler, MinMaxScaler, Normalizer
+import pandas as pd
+from FTEC4003.utils import printFullRow
+
 
 def pca(df, task):
     if task ==2:
@@ -27,7 +31,6 @@ def oneHotEncoding(df, task):
     else:
         print('process task 1')
     return result
-
 
 
 def discretization(df):
@@ -77,16 +80,18 @@ def getTrainingData(filename, visualize=False, discrete=True, encoding=True):
             train = oneHotEncoding(train, 2)
 
     # ----- visualize data -----
-    if visualize:
-        # ----- description -----
-        description(train)
+    #if visualize:
+         #----- description -----
+        #description(train)
         # ----- histogram -----
-        histogram(train)
+        #histogram(train)
         # ----- correlation analysis -----
+        #corrAnalysis(train)
         corrAnalysis(train)
         print(len(train[train['Exited'] == 1]))
     # return train.drop(columns=['Spain', 'Female', 'NotActive'])
     return train
+
 
 def simpleGetData(filename):
     train = pd.read_csv(filename, header=0)

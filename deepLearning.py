@@ -1,6 +1,13 @@
 from tensorflow.keras.layers import Dense    #for Dense layers
 from tensorflow.keras.models import Sequential #for sequential implementation
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, f1_score
+from FTEC4003.dataPreprocessing  import *
+
+from FTEC4003.dataPreprocessing import getTrainingData
+
+
+def kerasModel(X_train, X_test, y_train, y_test, df):
 from dataPreprocessing import *
 from sklearn.decomposition import PCA
 
@@ -21,6 +28,7 @@ from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import StandardScaler
 
 def kerasModel():
+
     # https://medium.com/datadriveninvestor/building-neural-network-using-keras-for-classification-3a3656c726c1
     classifier = Sequential()
     # First Hidden Layer
