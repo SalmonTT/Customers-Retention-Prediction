@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc, accuracy_score, confusion_matrix, precision_score, recall_score, f1_score
 import seaborn as sns
 
+
 def printFullDf(df):
     # prints the dataframe in full
     pd.set_option('display.max_rows', None)
@@ -80,3 +81,14 @@ def corrAnalysis(df):
     plt.figure(figsize=(10,10))
     sns.heatmap(corrmat, cmap='viridis', annot=True, linewidths=0.5)
     plt.show()
+
+def exportCSV(filename, pred_prob, model_name):
+    df = pd.read_csv(filename, header=0)
+    result = pd.DataFrame()
+    result['RowNumber'] = df['RowNumber']
+    result['Exited'] = pred_prob
+    result['Exited'] = result['Exited'].apply(lambda x: 1 if x >= 0.5 else 0)
+    result.to_csv('submission_2.csv', index=False)
+    print(result)
+    return
+

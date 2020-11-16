@@ -1,4 +1,3 @@
-
 from sklearn.decomposition import PCA
 from tensorflow._api.v2 import train
 from sklearn.preprocessing import OneHotEncoder, StandardScaler, MinMaxScaler, Normalizer
@@ -63,6 +62,23 @@ def normalization(df):
     normalizer = Normalizer().fit(df)
     df = normalizer.transform(df)
     return df
+
+def getTestData(filename,visualize=False,discrete=True,encoding=True):
+    train = pd.read_csv(filename, header=0)
+    train.drop(['RowNumber', 'Surname', 'CustomerId'], axis=1, inplace=True)
+    if discrete:
+        train = discretization(train)
+    if encoding:
+        train = oneHotEncoding(train, 2)
+    if visualize:
+         #----- description -----
+        description(train)
+        # ----- histogram -----
+        histogram(train)
+        # ----- correlation analysis -----
+        corrAnalysis(train)
+
+    return train
 
 def getTrainingData(filename, visualize=False, discrete=True, encoding=True):
     # ----- loading data -----
