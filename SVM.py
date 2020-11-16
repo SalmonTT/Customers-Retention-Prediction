@@ -57,4 +57,3 @@ def useSVM():
     runSVM(X_train, X_test, y_train, y_test)
     # tuneSVM(X_train, X_test, y_train, y_test)
 
-useSVM()

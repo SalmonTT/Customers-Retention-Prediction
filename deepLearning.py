@@ -8,6 +8,8 @@ from dataPreprocessing import *
 from sklearn.decomposition import PCA
 from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import StandardScaler
+from sklearn.utils import compute_class_weight
+import numpy as np
 
 def kerasModel():
 
@@ -31,23 +33,27 @@ def useKeras(df):
     # ----- split training data -----
     X = df.drop(['Exited'], axis=1)
     y = df.Exited
-    # ----- standardizing the input features -----
-    sc = StandardScaler()
-    X = sc.fit_transform(X)
+
     # ----- random_state is a seed for random sampling -----
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    # ----- standardizing the input features -----
+    X_train, X_test = standard(X_train, X_test)
     # ---- PCA ------
-    pca = PCA(n_components='mle')
-    X_train = pca.fit_transform(X_train)
-    X_test = pca.transform(X_test)
+    # pca = PCA(n_components='mle')
+    # X_train = pca.fit_transform(X_train)
+    # X_test = pca.transform(X_test)
     # ----- building the model -----
     model = kerasModel()
+
+    class_weights = compute_class_weight('balanced', np.unique(y_train),y_train)
+    class_weights = {i : class_weights[i] for i in range(2)}
     # Fitting the data to the training dataset
     model.fit(
         X_train,
         y_train,
-        batch_size=10,
-        epochs=60,
+        batch_size=3,
+        epochs=100,
+        # class_weight=class_weights
     )
     # loss and accuracy
     eval_model = model.evaluate(X_train, y_train)

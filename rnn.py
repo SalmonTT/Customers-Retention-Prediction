@@ -26,13 +26,13 @@ def rnn(X_train, X_test, y_train, y_test):
     rnn.fit(X_train, y_train, epochs=1, batch_size=batchs_size, validation_data=(X_test, y_test))
     rnn.summary()
 
-    def useRnn():
-        train = getTrainingData('train.csv', visualize=False)
-        X = train.drop(['Exited'], axis=1)
-        sc = StandardScaler()
-        X = sc.fit_transform(X)
-        y = train.Exited
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
-        rnn(X_train, X_test, y_train, y_test)
+def useRnn():
+    train = getTrainingData('train.csv', visualize=False)
+    X = train.drop(['Exited'], axis=1)
+    sc = StandardScaler()
+    X = sc.fit_transform(X)
+    y = train.Exited
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
+    rnn(X_train, X_test, y_train, y_test)
 
-    useRnn()
+useRnn()

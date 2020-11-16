@@ -80,7 +80,7 @@ def getTrainingData(filename, visualize=False, discrete=True, encoding=True):
             train = oneHotEncoding(train, 2)
 
     # ----- visualize data -----
-    #if visualize:
+    if visualize:
          #----- description -----
         #description(train)
         # ----- histogram -----
