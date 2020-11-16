@@ -10,6 +10,17 @@ from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import StandardScaler
 from sklearn.utils import compute_class_weight
 import numpy as np
+import tensorflow.keras.backend as K
+from utils import exportCSV
+
+def get_f1(y_true, y_pred): #taken from old keras source code
+    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+    possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
+    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
+    precision = true_positives / (predicted_positives + K.epsilon())
+    recall = true_positives / (possible_positives + K.epsilon())
+    f1_val = 2*(precision*recall)/(precision+recall+K.epsilon())
+    return f1_val
 
 def kerasModel():
 
@@ -25,7 +36,7 @@ def kerasModel():
     classifier.compile(
         optimizer='sgd',
         loss="binary_crossentropy",
-        metrics="BinaryAccuracy"
+        metrics=[get_f1]
     )
     return classifier
 
@@ -52,10 +63,18 @@ def useKeras(df):
         X_train,
         y_train,
         batch_size=3,
-        epochs=100,
-        # class_weight=class_weights
+        epochs=50,
+        class_weight=class_weights
     )
-    # loss and accuracy
+
+    # ----- evaluate test sample and return a .csv ----
+    test_data = getTestData('assignment-test.csv', False, False, True)
+    sc = StandardScaler().fit(test_data)
+    test_data = sc.transform(test_data)
+    pred_prob = model.predict(test_data)
+    print(pred_prob)
+    exportCSV('assignment-test.csv', pred_prob, 'deepLearning')
+    # ----- loss and accuracy -----
     eval_model = model.evaluate(X_train, y_train)
     print(eval_model)
     y_pred = model.predict(X_test)
@@ -66,7 +85,6 @@ def useKeras(df):
     print("Precision score: ", precision_score(y_test, y_pred))
     print("Recall score: ", recall_score(y_test, y_pred))
     print("F1 score: ", f1_score(y_test, y_pred))
-
 
 
     return
