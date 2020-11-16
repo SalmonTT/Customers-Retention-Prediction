@@ -3,7 +3,7 @@ from sklearn.decomposition import PCA
 from tensorflow._api.v2 import train
 from sklearn.preprocessing import OneHotEncoder, StandardScaler, MinMaxScaler, Normalizer
 import pandas as pd
-from FTEC4003.utils import printFullRow
+from utils import *
 
 
 def pca(df, task):
@@ -80,7 +80,7 @@ def getTrainingData(filename, visualize=False, discrete=True, encoding=True):
             train = oneHotEncoding(train, 2)
 
     # ----- visualize data -----
-    #if visualize:
+    if visualize:
          #----- description -----
         #description(train)
         # ----- histogram -----
