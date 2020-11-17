@@ -66,7 +66,7 @@ def getTestData(filename,visualize=False,discrete=True,encoding=True):
         histogram(train)
         # ----- correlation analysis -----
         corrAnalysis(train)
-
+    train.drop(['Spain', 'Male', 'NotActive'], axis=1, inplace=True)
     return train
 
 def getTrainingData(filename, visualize=False, discrete=True, encoding=True):
@@ -111,4 +111,4 @@ def getTestingData(discrete=True, encoding=True):
     return result
 
 # getTestingData()
-getTrainingData('train.csv', visualize=False, discrete=True, encoding=True)
+# getTrainingData('train.csv', visualize=False, discrete=True, encoding=True)

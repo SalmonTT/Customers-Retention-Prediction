@@ -41,6 +41,11 @@ def xgModel():
     y_test = df_test.Exited
     print_score(grid_search_cv, X_train, y_train, X_test, y_test, train=True)
     print_score(grid_search_cv, X_train, y_train, X_test, y_test, train=False)
+    # ----- export csv ------
+    # test_data = getTestData('assignment-test.csv', False, True, True)
+    # pred_prob = grid_search_cv.predict(test_data)
+    # print(pred_prob)
+    # exportCSV('assignment-test.csv', pred_prob)
     return
 
 xgModel()
