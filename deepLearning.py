@@ -95,6 +95,6 @@ def useKeras(df):
 
 def tune():
     df = getTrainingData('Train.csv', False, False, True)
-    useKeras(df)
+    # useKeras(df)
 
 tune()
