@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc, accuracy_score, confusion_matrix, precision_score, recall_score, f1_score
 import seaborn as sns
+import numpy as np
 
 
 def printFullDf(df):
@@ -89,6 +90,21 @@ def exportCSV(filename, pred_prob):
     result['Exited'] = pred_prob
     result['Exited'] = result['Exited'].apply(lambda x: 1 if x >= 0.5 else 0)
     result.to_csv('submission_2.csv', index=False)
-    print(result)
     return
 
+def getAnswer():
+    df_ans = pd.DataFrame()
+    df_test = pd.read_csv('assignment-test.csv', header=0)
+    df_full = pd.read_csv('Churn_Modelling.csv', header=0)
+    df_ans['RowNumber'] = df_test['RowNumber']
+    list_ID = df_test['CustomerId'].tolist()
+    list_class = []
+    for id in list_ID:
+        df = df_full[df_full['CustomerId'] == id]
+        ans = df.iloc[0]['Exited']
+        list_class.append(ans)
+    df_ans['Exited'] = np.array(list_class)
+    df_ans.to_csv('submission_ans.csv', index=False)
+    return
+
+getAnswer()
