@@ -26,7 +26,7 @@ def oneHotEncoding(df, task):
         'Active'])
         # enc_df = pd.DataFrame(data=enc_array, columns=['France', 'Germany', 'Female', 'NotActive'])
         result = pd.concat([df, enc_df], axis=1)
-        printFullRow(result)
+        # printFullRow(result)
     else:
         print('process task 1')
     return result

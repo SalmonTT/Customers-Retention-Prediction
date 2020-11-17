@@ -12,6 +12,7 @@ from sklearn.utils import compute_class_weight
 import numpy as np
 import tensorflow.keras.backend as K
 from utils import exportCSV
+from imblearn.over_sampling import SMOTE
 
 def get_f1(y_true, y_pred): #taken from old keras source code
     true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
@@ -44,15 +45,18 @@ def useKeras(df):
     # ----- split training data -----
     X = df.drop(['Exited'], axis=1)
     y = df.Exited
-
+    # ---- SMOTE ------
+    # method 1: technically only for continuous data
+    oversample = SMOTE()
+    X, y = oversample.fit_resample(X, y)
+    # method 2: SMOTE-NC (Nominal & Continuous), works for cat and continuous (mixed)
+    
     # ----- random_state is a seed for random sampling -----
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     # ----- standardizing the input features -----
     X_train, X_test = standard(X_train, X_test)
-    # ---- PCA ------
-    # pca = PCA(n_components='mle')
-    # X_train = pca.fit_transform(X_train)
-    # X_test = pca.transform(X_test)
+
+
     # ----- building the model -----
     model = kerasModel()
 
@@ -63,7 +67,7 @@ def useKeras(df):
         X_train,
         y_train,
         batch_size=3,
-        epochs=50,
+        epochs=120,
         class_weight=class_weights
     )
 
@@ -73,7 +77,7 @@ def useKeras(df):
     test_data = sc.transform(test_data)
     pred_prob = model.predict(test_data)
     print(pred_prob)
-    exportCSV('assignment-test.csv', pred_prob, 'deepLearning')
+    exportCSV('assignment-test.csv', pred_prob)
     # ----- loss and accuracy -----
     eval_model = model.evaluate(X_train, y_train)
     print(eval_model)
