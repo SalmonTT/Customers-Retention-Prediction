@@ -82,7 +82,7 @@ def corrAnalysis(df):
     sns.heatmap(corrmat, cmap='viridis', annot=True, linewidths=0.5)
     plt.show()
 
-def exportCSV(filename, pred_prob, model_name):
+def exportCSV(filename, pred_prob):
     df = pd.read_csv(filename, header=0)
     result = pd.DataFrame()
     result['RowNumber'] = df['RowNumber']
