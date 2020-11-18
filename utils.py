@@ -107,4 +107,5 @@ def getAnswer():
     df_ans.to_csv('submission_ans.csv', index=False)
     return
 
+
 getAnswer()

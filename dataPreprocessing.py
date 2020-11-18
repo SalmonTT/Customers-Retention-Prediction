@@ -34,11 +34,15 @@ def oneHotEncoding(df, task):
 
 def discretization(df):
     # discretize balance:
+
     df['BalanceTop'] = df['Balance'].apply(lambda x: 1 if x > 128208 else 0)
     df['Balance0'] = df['Balance'].apply(lambda x: 1 if x > 0 else 0)
     df['BalanceMid'] = df['Balance'].apply(lambda x: 1 if x > 98196 else 0)
     df['BalanceLow'] = df['Balance'].apply(lambda x: 1 if x < 98196 else 0)
     df.drop(['Balance'], axis=1, inplace=True)
+    #
+    # df['Balance0'] = df['Balance'].apply(lambda x: 1 if x > 0 else 0)
+    # df['BalanceMid'] = df['Balance'].apply(lambda x: 1 if x > 98196 else 0)
     return df
 
 def standard(X_train, X_test):
@@ -47,21 +51,6 @@ def standard(X_train, X_test):
     X_train = scale.transform(X_train)
     X_test = scale.transform(X_test)
     return X_train, X_test
-
-def scaling(df):
-    # Scaling features to a range
-    min_max_scaler = MinMaxScaler().fit(df)
-    df = min_max_scaler.transform(df)
-    return df
-
-def normalization(df):
-    # Normalization is the process of scaling individual samples to have unit norm
-    # The L2-norm is the usual Euclidean length, i.e. the square root of the sum of the squared vector elements.
-    # The L1-norm is the sum of the absolute values of the vector elements.
-    # Default setting is L2-norm
-    normalizer = Normalizer().fit(df)
-    df = normalizer.transform(df)
-    return df
 
 def getTestData(filename,visualize=False,discrete=True,encoding=True):
     train = pd.read_csv(filename, header=0)
@@ -77,7 +66,7 @@ def getTestData(filename,visualize=False,discrete=True,encoding=True):
         histogram(train)
         # ----- correlation analysis -----
         corrAnalysis(train)
-
+    train.drop(['Spain', 'Male', 'NotActive'], axis=1, inplace=True)
     return train
 
 def getTrainingData(filename, visualize=False, discrete=True, encoding=True):
@@ -94,22 +83,45 @@ def getTrainingData(filename, visualize=False, discrete=True, encoding=True):
             train = discretization(train)
         if encoding:
             train = oneHotEncoding(train, 2)
-
+            train.drop(['Spain', 'Male', 'NotActive'], axis=1, inplace=True)
     # ----- visualize data -----
     if visualize:
          #----- description -----
-        #description(train)
+        description(train)
         # ----- histogram -----
-        #histogram(train)
+        histogram(train)
         # ----- correlation analysis -----
-        #corrAnalysis(train)
         corrAnalysis(train)
-        print(len(train[train['Exited'] == 1]))
-    # return train.drop(columns=['Spain', 'Female', 'NotActive'])
+
     return train
 
+def getTestingData(discrete=True, encoding=True):
+    df_test = pd.read_csv('assignment-test.csv', header=0)
+    list_ID = df_test['CustomerId'].tolist()
+    df_full = pd.read_csv('Churn_Modelling.csv', header=0)
+    result = df_full[df_full['CustomerId'].isin(list_ID)]
+    result.drop(['RowNumber', 'Surname', 'CustomerId'], axis=1, inplace=True)
+    result.reset_index(inplace=True)
+    result.drop(['index'], axis=1, inplace=True)
+    if discrete:
+        result = discretization(result)
+    if encoding:
+        result = oneHotEncoding(result, 2)
+        result.drop(['Spain', 'Male', 'NotActive'], axis=1, inplace=True)
+    # print(result[result['Exited'] == 1].shape)
+    # histogram(result[result['Exited'] == 1])
+    return result
 
-def simpleGetData(filename):
-    train = pd.read_csv(filename, header=0)
-    train.drop(['RowNumber', 'Surname', 'CustomerId'], axis=1, inplace=True)
-    return train
+def rawDataAnalysis():
+    train = pd.read_csv('train.csv', header=0)
+    # histogram(train[train['Exited'] == 1])
+    # print(train[train['Exited'] == 1].shape)
+    printFullDf(train.groupby('Exited').mean())
+    # important features: Age, Credit Score, Balance, IsActiveMember
+    # pd.crosstab(train.HasCrCard, train.Exited).plot(kind='bar')
+    # plt.show()
+
+
+rawDataAnalysis()
+# getTestingData()
+# getTrainingData('train.csv', visualize=False, discrete=True, encoding=True)
