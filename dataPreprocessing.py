@@ -122,6 +122,6 @@ def rawDataAnalysis():
     # plt.show()
 
 
-# rawDataAnalysis()
+rawDataAnalysis()
 # getTestingData()
 # getTrainingData('train.csv', visualize=False, discrete=True, encoding=True)

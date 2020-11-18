@@ -11,6 +11,7 @@ from imblearn.over_sampling import SMOTE, SMOTENC, BorderlineSMOTE
 def xgModel():
     train = getTrainingData('train.csv', visualize=False, discrete=False, encoding=True)
     X_train = train.drop(['Exited'], axis=1)
+    X_train = X_train[['Age','NumOfProducts', 'Active', 'Balance', 'Germany', 'CreditScore']]
     y_train = train.Exited
     # ----- SMOTE ------
     # method 1: technically only for continuous data
@@ -25,21 +26,23 @@ def xgModel():
 
     model = xgb.XGBClassifier()
     params = {
-        'n_estimators': [15],
+        'n_estimators': [15,20],
         'max_depth': [5],
         'gamma': [0,1],
         'learning_rate': [0.2],
-        # 'scale_pos_weight': [3, 1],
-        # 'validate_parameters': [0]
+        'scale_pos_weight': [3, 1],
+        'validate_parameters': [0]
     }
 
-    grid_search_cv = GridSearchCV(model, params, verbose=1, n_jobs=-1, cv=5, scoring='f1')
+    grid_search_cv = GridSearchCV(model, params, verbose=1, n_jobs=5, cv=3, scoring='f1')
     grid_search_cv.fit(X_train, y_train)
     best_grid = grid_search_cv.best_estimator_
     print(best_grid)
     # ----- get testing data ---- #
     df_test = getTestingData(False, True)
     X_test = df_test.drop(['Exited'], axis=1)
+    # ['Age', 'NumOfProducts', 'Active', 'Balance0', 'BalanceMid', 'Germany', 'CreditScore']
+    X_test= X_test[['Age','NumOfProducts', 'Active', 'Balance', 'Germany', 'CreditScore']]
     y_test = df_test.Exited
     print_score(grid_search_cv, X_train, y_train, X_test, y_test, train=True)
     print_score(grid_search_cv, X_train, y_train, X_test, y_test, train=False)
