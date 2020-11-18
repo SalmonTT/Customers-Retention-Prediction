@@ -9,13 +9,13 @@ from imblearn.over_sampling import SMOTE, SMOTENC, BorderlineSMOTE
 
 
 def xgModel():
-    train = getTrainingData('train.csv', visualize=False, discrete=True, encoding=True)
-    X = train.drop(['Exited'], axis=1)
-    y = train.Exited
+    train = getTrainingData('train.csv', visualize=False, discrete=False, encoding=True)
+    X_train = train.drop(['Exited'], axis=1)
+    y_train = train.Exited
     # ----- SMOTE ------
     # method 1: technically only for continuous data
     oversample = SMOTE()
-    X_train, y_train = oversample.fit_resample(X, y)
+    X_train, y_train = oversample.fit_resample(X_train, y_train)
     # method 2: SMOTE NC
     # smotenc = SMOTENC([4,6,7,8,9,10,11,12,13], random_state=101)
     # X_train, y_train = smotenc.fit_resample(X, y)
@@ -25,10 +25,12 @@ def xgModel():
 
     model = xgb.XGBClassifier()
     params = {
-        'n_estimators': [80],
-        'max_depth': [4],
-        'gamma': [1],
-        'learning_rate': [0.2]
+        'n_estimators': [15],
+        'max_depth': [5],
+        'gamma': [0,1],
+        'learning_rate': [0.2],
+        # 'scale_pos_weight': [3, 1],
+        # 'validate_parameters': [0]
     }
 
     grid_search_cv = GridSearchCV(model, params, verbose=1, n_jobs=-1, cv=5, scoring='f1')
@@ -36,7 +38,7 @@ def xgModel():
     best_grid = grid_search_cv.best_estimator_
     print(best_grid)
     # ----- get testing data ---- #
-    df_test = getTestingData(True, True)
+    df_test = getTestingData(False, True)
     X_test = df_test.drop(['Exited'], axis=1)
     y_test = df_test.Exited
     print_score(grid_search_cv, X_train, y_train, X_test, y_test, train=True)

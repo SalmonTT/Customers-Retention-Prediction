@@ -83,7 +83,7 @@ def getTrainingData(filename, visualize=False, discrete=True, encoding=True):
             train = discretization(train)
         if encoding:
             train = oneHotEncoding(train, 2)
-
+            train.drop(['Spain', 'Male', 'NotActive'], axis=1, inplace=True)
     # ----- visualize data -----
     if visualize:
          #----- description -----
@@ -92,7 +92,7 @@ def getTrainingData(filename, visualize=False, discrete=True, encoding=True):
         histogram(train)
         # ----- correlation analysis -----
         corrAnalysis(train)
-    train.drop(['Spain', 'Male', 'NotActive'], axis=1, inplace=True)
+
     return train
 
 def getTestingData(discrete=True, encoding=True):
@@ -107,8 +107,21 @@ def getTestingData(discrete=True, encoding=True):
         result = discretization(result)
     if encoding:
         result = oneHotEncoding(result, 2)
-    result.drop(['Spain', 'Male', 'NotActive'], axis=1, inplace=True)
+        result.drop(['Spain', 'Male', 'NotActive'], axis=1, inplace=True)
+    # print(result[result['Exited'] == 1].shape)
+    # histogram(result[result['Exited'] == 1])
     return result
 
+def rawDataAnalysis():
+    train = pd.read_csv('train.csv', header=0)
+    # histogram(train[train['Exited'] == 1])
+    # print(train[train['Exited'] == 1].shape)
+    printFullDf(train.groupby('Exited').mean())
+    # important features: Age, Credit Score, Balance, IsActiveMember
+    # pd.crosstab(train.HasCrCard, train.Exited).plot(kind='bar')
+    # plt.show()
+
+
+# rawDataAnalysis()
 # getTestingData()
 # getTrainingData('train.csv', visualize=False, discrete=True, encoding=True)

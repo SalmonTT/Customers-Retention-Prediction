@@ -43,44 +43,46 @@ def kerasModel():
 
 def useKeras(df):
     # ----- split training data -----
-    X = df.drop(['Exited'], axis=1)
-    y = df.Exited
+    X_train = df.drop(['Exited'], axis=1)
+    y_train = df.Exited
+    # ----- standardizing the input features -----
+    scale = StandardScaler().fit(X_train)
+    X_train = scale.transform(X_train)
     # ---- SMOTE ------
     # method 1: technically only for continuous data
     oversample = SMOTE()
-    X, y = oversample.fit_resample(X, y)
-    # method 2: SMOTE-NC (Nominal & Continuous), works for cat and continuous (mixed)
-    
-    # ----- random_state is a seed for random sampling -----
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    # ----- standardizing the input features -----
-    X_train, X_test = standard(X_train, X_test)
-
-
+    X_train, y_train = oversample.fit_resample(X_train, y_train)
     # ----- building the model -----
     model = kerasModel()
-
+    # ----- class weights -----
     class_weights = compute_class_weight('balanced', np.unique(y_train),y_train)
     class_weights = {i : class_weights[i] for i in range(2)}
     # Fitting the data to the training dataset
     model.fit(
         X_train,
         y_train,
-        batch_size=3,
-        epochs=120,
+        batch_size=1,
+        epochs=100,
         class_weight=class_weights
     )
 
     # ----- evaluate test sample and return a .csv ----
-    test_data = getTestData('assignment-test.csv', False, False, True)
-    sc = StandardScaler().fit(test_data)
-    test_data = sc.transform(test_data)
-    pred_prob = model.predict(test_data)
-    print(pred_prob)
-    exportCSV('assignment-test.csv', pred_prob)
-    # ----- loss and accuracy -----
-    eval_model = model.evaluate(X_train, y_train)
-    print(eval_model)
+    # test_data = getTestData('assignment-test.csv', False, False, True)
+    # sc = StandardScaler().fit(test_data)
+    # test_data = sc.transform(test_data)
+    # pred_prob = model.predict(test_data)
+    # print(pred_prob)
+    # exportCSV('assignment-test.csv', pred_prob)
+
+    # ----- get testing data ---- #
+    df_test = getTestingData(False, True)
+    X_test = df_test.drop(['Exited'], axis=1)
+    X_test = scale.transform(X_test)
+    y_test = df_test.Exited
+
+    # # ----- loss and accuracy -----
+    # eval_model = model.evaluate(X_train, y_train)
+    # print(eval_model)
     y_pred = model.predict(X_test)
     y_pred = (y_pred > 0.5)
     cm = confusion_matrix(y_test, y_pred)
@@ -95,6 +97,6 @@ def useKeras(df):
 
 def tune():
     df = getTrainingData('Train.csv', False, False, True)
-    # useKeras(df)
+    useKeras(df)
 
 tune()
