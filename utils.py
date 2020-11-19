@@ -16,6 +16,7 @@ def printFullRow(df):
     print(df)
 
 def print_score(clf, X_train, y_train, X_test, y_test, train=True):
+    f1 = 0
     if train:
         pred = clf.predict(X_train)
         print("Train Result:\n===========================================")
@@ -31,6 +32,8 @@ def print_score(clf, X_train, y_train, X_test, y_test, train=True):
         print(
             f"Classification Report: \n \tPrecision: {precision_score(y_test, pred)}\n\tRecall Score: {recall_score(y_test, pred)}\n\tF1 score: {f1_score(y_test, pred)}\n")
         print(f"Confusion Matrix: \n {confusion_matrix(y_test, pred)}\n")
+        f1 = f1_score(y_test, pred)
+    return f1
 
 def ROC(clf, X_train, y_train, X_test, y_test, train=True):
     if train:
