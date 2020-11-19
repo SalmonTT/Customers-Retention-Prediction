@@ -2,7 +2,6 @@ from tensorflow.keras.layers import Dense    #for Dense layers
 from tensorflow.keras.models import Sequential #for sequential implementation
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, f1_score
-from dataPreprocessing import *
 from dataPreprocessing import getTrainingData
 from dataPreprocessing import *
 from sklearn.decomposition import PCA
@@ -28,11 +27,11 @@ def kerasModel():
     # https://medium.com/datadriveninvestor/building-neural-network-using-keras-for-classification-3a3656c726c1
     classifier = Sequential()
     # First Hidden Layer
-    classifier.add(Dense(6, activation='relu', kernel_initializer='random_normal'))
+    classifier.add(Dense(6, activation='relu', kernel_initializer='glorot_uniform'))
     # Second  Hidden Layer
-    classifier.add(Dense(6, activation='relu', kernel_initializer='random_normal'))
+    classifier.add(Dense(6, activation='relu', kernel_initializer='glorot_uniform'))
     # Output Layer
-    classifier.add(Dense(1, activation='sigmoid', kernel_initializer='random_normal'))
+    classifier.add(Dense(1, activation='sigmoid', kernel_initializer='glorot_uniform'))
     # Compiling the neural network
     classifier.compile(
         optimizer='sgd',
@@ -48,22 +47,25 @@ def useKeras(df):
     # ----- standardizing the input features -----
     scale = StandardScaler().fit(X_train)
     X_train = scale.transform(X_train)
+
     # ---- SMOTE ------
     # method 1: technically only for continuous data
     oversample = SMOTE()
     X_train, y_train = oversample.fit_resample(X_train, y_train)
+
+
     # ----- building the model -----
     model = kerasModel()
     # ----- class weights -----
-    class_weights = compute_class_weight('balanced', np.unique(y_train),y_train)
-    class_weights = {i : class_weights[i] for i in range(2)}
+    # class_weights = compute_class_weight('balanced', np.unique(y_train),y_train)
+    # class_weights = {i : class_weights[i] for i in range(2)}
     # Fitting the data to the training dataset
     model.fit(
         X_train,
         y_train,
-        batch_size=1,
+        batch_size=3,
         epochs=100,
-        class_weight=class_weights
+        # class_weight='zeros'
     )
 
     # ----- evaluate test sample and return a .csv ----

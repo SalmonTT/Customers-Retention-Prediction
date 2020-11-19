@@ -7,9 +7,10 @@ from imblearn.over_sampling import SMOTE
 def randomForest(X_train, X_test, y_train, y_test):
     # Parameter tuning
     model = RandomForestClassifier()
-    params = {'max_depth': [5,10,15],
+    params = {'max_depth': [5,6,7],
              'min_samples_leaf': [2,4,6,8],
-             'n_estimators': [80,120, 140, 200]}
+             'n_estimators': [120],
+              'max_features':['sqrt']}
 
     grid_search_cv = GridSearchCV(model, params, verbose=1, n_jobs=-1, cv=3, scoring='f1')
     grid_search_cv.fit(X_train, y_train)

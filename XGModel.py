@@ -1,5 +1,5 @@
 from dataPreprocessing import *
-from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.model_selection import train_test_split, GridSearchCV, RandomizedSearchCV
 from utils import print_score, ROC, printFullRow
 from sklearn.preprocessing import StandardScaler
 import pandas as pd
@@ -27,14 +27,14 @@ def xgModel():
     model = xgb.XGBClassifier()
     params = {
         'n_estimators': [15,20],
-        'max_depth': [5],
+        'max_depth': [4,5,6],
         'gamma': [0,1],
         'learning_rate': [0.2],
         'scale_pos_weight': [3, 1],
         'validate_parameters': [0]
     }
 
-    grid_search_cv = GridSearchCV(model, params, verbose=1, n_jobs=5, cv=3, scoring='f1')
+    grid_search_cv = RandomizedSearchCV(model, params, verbose=1, n_jobs=1, cv=10, scoring='f1')
     grid_search_cv.fit(X_train, y_train)
     best_grid = grid_search_cv.best_estimator_
     print(best_grid)

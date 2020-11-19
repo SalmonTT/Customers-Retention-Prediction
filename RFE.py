@@ -38,4 +38,4 @@ def logisticReg():
 
     return
 
-logisticReg()
+# logisticReg()
