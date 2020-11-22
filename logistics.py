@@ -85,6 +85,13 @@ def logis():
     # print(X_train.shape, X_val.shape)
     # printFullRow(X_train[:5])
     # print(y_train.value_counts())
+    ##### Control
+    X_train_og = X_train
+    X_val_og = X_val
+    y_train_og = y_train
+    y_val_og = y_val
+    test_train_og = test_train
+    test_val_og = test_val
 
     ###### Standarize and Normalize #####
 
@@ -121,23 +128,25 @@ def logis():
     print(description(X_train))
 
     ##### MODEL BUILDING ######
-    f1_scores = []
-    models = []
-    kfold = 3
     scoring = ['accuracy', 'precision_weighted', 'recall_weighted', 'f1_weighted', 'roc_auc']
     # --- Logistic regression
     logistic_model = LogisticRegression(solver='lbfgs', max_iter=300)
     # fit the data
     logistic_model.fit(X_train, y_train)
-    print("using train.csv")
     print_score(logistic_model, X_train, y_train, X_val, y_val, train=True)
     print_score(logistic_model, X_train, y_train, X_val, y_val, train=False)
-    print('using testing.csv')
     score = print_score(logistic_model, X_train, y_train, test_train, test_val, train=False)
-    f1_scores.append(score)
-    models.append('logistics regression')
+    # using non standardized dataset
+    logistic_model_og = LogisticRegression(solver='lbfgs', max_iter=300)
+    # fit the data
+    print('No standardization')
+    logistic_model_og.fit(X_train_og, y_train_og)
+    print_score(logistic_model_og, X_train_og, y_train_og, X_val_og, y_val_og, train=True)
+    print_score(logistic_model_og, X_train_og, y_train_og, X_val_og, y_val_og, train=False)
+    score = print_score(logistic_model_og, X_train_og, y_train_og, test_train_og, test_val_og, train=False)
 
-    # --- Logistic regression
+
+
 
     return
 

@@ -5,6 +5,11 @@ import pandas as pd
 from utils import *
 from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import train_test_split
+from imblearn.over_sampling import SVMSMOTE
+from imblearn.over_sampling import ADASYN
+from imblearn.over_sampling import RandomOverSampler
+from imblearn.under_sampling import RandomUnderSampler
+
 
 def pca(df, task):
     if task ==2:
@@ -122,7 +127,7 @@ def rawDataAnalysis():
     # pd.crosstab(train.HasCrCard, train.Exited).plot(kind='bar')
     # plt.show()
 
-def getAllCleanedData():
+def getAllCleanedData(standardize = 1, binning=0):
     df = pd.read_csv('train.csv', header=0)
     # printFullRow(df)
     # print(df['Exited'].value_counts())
@@ -182,27 +187,105 @@ def getAllCleanedData():
     X_val.drop(['France', 'Female'], axis=1, inplace=True)
     test_train.drop(['France', 'Female'], axis=1, inplace=True)
 
+
+
     ###### Oversample training  data #####
-    smk = SMOTE()
-    X_train, y_train = smk.fit_sample(X_train, y_train)
-    # Oversample validation data
-    X_val, y_val = smk.fit_sample(X_val, y_val)
+    svmsmote = SVMSMOTE(random_state=101)
+    X_train, y_train = svmsmote.fit_resample(X_train, y_train)
+    # smk = SMOTE()
+    # X_train, y_train = smk.fit_sample(X_train, y_train)
+    # adasyn = ADASYN(random_state=101)
+    # X_train, y_train = adasyn.fit_resample(X_train, y_train)
+    # over = RandomOverSampler(sampling_strategy=0.4, random_state=42)
+    # under = RandomUnderSampler(sampling_strategy=0.5, random_state=42)
+    # X_train, y_train = over.fit_sample(X_train, y_train)
+    # X_train, y_train = under.fit_sample(X_train, y_train)
 
     # print(X_train.shape, X_val.shape)
     # printFullRow(X_train[:5])
     # print(y_train.value_counts())
 
+    if binning == 1:
+        # bin balance into 4 categories
+        X_train['Balance0'] = X_train['Balance'].apply(lambda x: 1 if x < 50000 else 0)
+        X_train['Balance1'] = X_train['Balance'].apply(lambda x: 1 if (x > 50000 and x < 100000) else 0)
+        X_train['Balance2'] = X_train['Balance'].apply(lambda x: 1 if (x > 100000 and x < 150000) else 0)
+        X_train['Balance3'] = X_train['Balance'].apply(lambda x: 1 if (x > 150000 and x < 200000) else 0)
+        X_train.drop(['Balance'], axis=1, inplace=True)
+        X_val['Balance0'] = X_val['Balance'].apply(lambda x: 1 if x < 50000 else 0)
+        X_val['Balance1'] = X_val['Balance'].apply(lambda x: 1 if (x > 50000 and x < 100000) else 0)
+        X_val['Balance2'] = X_val['Balance'].apply(lambda x: 1 if (x > 100000 and x < 150000) else 0)
+        X_val['Balance3'] = X_val['Balance'].apply(lambda x: 1 if (x > 150000 and x < 200000) else 0)
+        X_val.drop(['Balance'], axis=1, inplace=True)
+        test_train['Balance0'] = test_train['Balance'].apply(lambda x: 1 if x < 50000 else 0)
+        test_train['Balance1'] = test_train['Balance'].apply(lambda x: 1 if (x > 50000 and x < 100000) else 0)
+        test_train['Balance2'] = test_train['Balance'].apply(lambda x: 1 if (x > 100000 and x < 150000) else 0)
+        test_train['Balance3'] = test_train['Balance'].apply(lambda x: 1 if (x > 150000 and x < 200000) else 0)
+        test_train.drop(['Balance'], axis=1, inplace=True)
+
+        # binning age
+        X_train['Age40-50'] = X_train['Age'].apply(lambda x: 1 if (x>=40 and x<50) else 0)
+        X_train['Age30-40'] = X_train['Age'].apply(lambda x: 1 if (x >= 30 and x < 40) else 0)
+        X_train['Ageless30'] = X_train['Age'].apply(lambda x: 1 if (x < 30) else 0)
+        X_train['Ageover50'] = X_train['Age'].apply(lambda x: 1 if (x > 50) else 0)
+        X_train.drop(['Age'], axis=1, inplace=True)
+        X_val['Age40-50'] = X_val['Age'].apply(lambda x: 1 if (x >= 40 and x < 50) else 0)
+        X_val['Age30-40'] = X_val['Age'].apply(lambda x: 1 if (x >= 30 and x < 40) else 0)
+        X_val['Ageless30'] = X_val['Age'].apply(lambda x: 1 if (x < 30) else 0)
+        X_val['Ageover50'] = X_val['Age'].apply(lambda x: 1 if (x > 50) else 0)
+        X_val.drop(['Age'], axis=1, inplace=True)
+        test_train['Age40-50'] = test_train['Age'].apply(lambda x: 1 if (x>=40 and x<50) else 0)
+        test_train['Age30-40'] = test_train['Age'].apply(lambda x: 1 if (x >= 30 and x < 40) else 0)
+        test_train['Ageless30'] = test_train['Age'].apply(lambda x: 1 if (x < 30) else 0)
+        test_train['Ageover50'] = test_train['Age'].apply(lambda x: 1 if (x > 50) else 0)
+        test_train.drop(['Age'], axis=1, inplace=True)
+
+        # binning num of products
+        X_train['1 Product'] = X_train['NumOfProducts'].apply(lambda x: 1 if x==1  else 0)
+        X_train['2 Product'] = X_train['NumOfProducts'].apply(lambda x: 1 if x==2 else 0)
+        X_train['3 Product'] = X_train['NumOfProducts'].apply(lambda x: 1 if x==3 else 0)
+        X_train['4 Product'] = X_train['NumOfProducts'].apply(lambda x: 1 if x==4 else 0)
+        X_train.drop(['NumOfProducts'], axis=1, inplace=True)
+        X_val['1 Product'] = X_val['NumOfProducts'].apply(lambda x: 1 if x == 1 else 0)
+        X_val['2 Product'] = X_val['NumOfProducts'].apply(lambda x: 1 if x == 2 else 0)
+        X_val['3 Product'] = X_val['NumOfProducts'].apply(lambda x: 1 if x == 3 else 0)
+        X_val['4 Product'] = X_val['NumOfProducts'].apply(lambda x: 1 if x == 4 else 0)
+        X_val.drop(['NumOfProducts'], axis=1, inplace=True)
+        test_train['1 Product'] = test_train['NumOfProducts'].apply(lambda x: 1 if x == 1 else 0)
+        test_train['2 Product'] = test_train['NumOfProducts'].apply(lambda x: 1 if x == 2 else 0)
+        test_train['3 Product'] = test_train['NumOfProducts'].apply(lambda x: 1 if x == 3 else 0)
+        test_train['4 Product'] = test_train['NumOfProducts'].apply(lambda x: 1 if x == 4 else 0)
+        test_train.drop(['NumOfProducts'], axis=1, inplace=True)
+
+    ##### Control
+    if standardize != 1:
+        X_train_og = X_train
+        X_val_og = X_val
+        y_train_og = y_train
+        y_val_og = y_val
+        test_train_og = test_train
+        test_val_og = test_val
+        return X_train_og, y_train_og, X_val_og, y_val_og, test_train_og, test_val_og
+
     ###### Standarize and Normalize #####
 
-    scale = StandardScaler().fit(X_train[['CreditScore', 'Age', 'NumOfProducts']])
-    X_train[['CreditScore', 'Age', 'NumOfProducts']] = scale.transform(X_train[['CreditScore', 'Age', 'NumOfProducts']])
-    X_val[['CreditScore', 'Age', 'NumOfProducts']] = scale.transform(X_val[['CreditScore', 'Age', 'NumOfProducts']])
-    test_train[['CreditScore', 'Age', 'NumOfProducts']] = scale.transform(
-        test_train[['CreditScore', 'Age', 'NumOfProducts']])
+    # scale = StandardScaler().fit(X_train[['CreditScore', 'Age', 'NumOfProducts']])
+    # X_train[['CreditScore', 'Age', 'NumOfProducts']] = scale.transform(X_train[['CreditScore', 'Age', 'NumOfProducts']])
+    # X_val[['CreditScore', 'Age', 'NumOfProducts']] = scale.transform(X_val[['CreditScore', 'Age', 'NumOfProducts']])
+    # test_train[['CreditScore', 'Age', 'NumOfProducts']] = scale.transform(
+    #     test_train[['CreditScore', 'Age', 'NumOfProducts']])
+
+    scale = StandardScaler().fit(X_train[['CreditScore', 'NumOfProducts']])
+    X_train[['CreditScore', 'NumOfProducts']] = scale.transform(X_train[['CreditScore', 'NumOfProducts']])
+    X_val[['CreditScore', 'NumOfProducts']] = scale.transform(X_val[['CreditScore', 'NumOfProducts']])
+    test_train[['CreditScore', 'NumOfProducts']] = scale.transform(
+        test_train[['CreditScore', 'NumOfProducts']])
+
     robust_scale = RobustScaler().fit(X_train[['Balance']])
     X_train[['Balance']] = robust_scale.transform(X_train[['Balance']])
     X_val[['Balance']] = robust_scale.transform(X_val[['Balance']])
     test_train[['Balance']] = robust_scale.transform(test_train[['Balance']])
+
     # normalize salary
     salary_mean = X_train['EstimatedSalary'].mean()
     salary_std = X_train['EstimatedSalary'].std()
@@ -226,6 +309,103 @@ def getAllCleanedData():
 
     return X_train, y_train, X_val, y_val, test_train, test_val
 
+def getAllCleanedDataBig(standardize = 1):
+    df = pd.read_csv('train.csv', header=0)
+    # printFullRow(df)
+    # print(df['Exited'].value_counts())
+    df.drop(['CustomerId', 'Surname', 'RowNumber'], axis=1, inplace=True)
+    X_train = df.drop(['Exited'], axis=1)
+    y_train = df['Exited']
+    # printFullRow(X_train.head())
+
+    df_test = pd.read_csv('testing.csv', header=0)
+    # print(df_test.info())
+    test_train = df_test.drop(['Exited'], axis=1)
+    test_val = df_test['Exited']
+
+    ##### ENCODING #####
+
+    X_train['HasCrCard'] = X_train['HasCrCard'].apply(lambda x: 1. if x == 1 else 0.)
+    test_train['HasCrCard'] = test_train['HasCrCard'].apply(lambda x: 1. if x == 1 else 0.)
+
+    X_train['IsActiveMember'] = X_train['IsActiveMember'].apply(lambda x: 1. if x == 1 else 0.)
+    test_train['IsActiveMember'] = test_train['IsActiveMember'].apply(lambda x: 1. if x == 1 else 0.)
+
+    X_train_cat_df = X_train[['Geography', 'Gender']]
+    test_cat_df = test_train[['Geography', 'Gender']]
+
+    X_train = X_train.drop(['Geography', 'Gender'], axis=1)
+    test_train = test_train.drop(['Geography', 'Gender'], axis=1)
+    X_train.reset_index(drop=True, inplace=True)
+    test_train.reset_index(drop=True, inplace=True)
+
+    X_train_cat = X_train_cat_df.to_numpy()
+    test_cat = test_cat_df.to_numpy()
+
+    enc = OneHotEncoder().fit(X_train_cat)
+    X_train_enc_array = enc.transform(X_train_cat).toarray()
+    test_enc_array = enc.transform(test_cat).toarray()
+
+    X_train_enc_df = pd.DataFrame(data=X_train_enc_array, columns=['France', 'Germany', 'Spain', 'Female', 'Male'])
+    test_enc_df = pd.DataFrame(data=test_enc_array, columns=['France', 'Germany', 'Spain', 'Female', 'Male'])
+
+    X_train = pd.concat([X_train, X_train_enc_df], axis=1)
+    test_train = pd.concat([test_train, test_enc_df], axis=1)
+
+    # drop the extra columns
+    X_train.drop(['France', 'Female'], axis=1, inplace=True)
+
+    test_train.drop(['France', 'Female'], axis=1, inplace=True)
+
+    ###### Oversample training  data #####
+    # svmsmote = SVMSMOTE(random_state=101)
+    # X_train, y_train = svmsmote.fit_resample(X_train, y_train)
+    # smk = SMOTE()
+    # X_train, y_train = smk.fit_sample(X_train, y_train)
+    # adasyn = ADASYN(random_state=101)
+    # X_train, y_train = adasyn.fit_resample(X_train, y_train)
+    over = RandomOverSampler(sampling_strategy=0.4, random_state=42)
+    under = RandomUnderSampler(sampling_strategy=0.5, random_state=42)
+    # X_train, y_train = over.fit_sample(X_train, y_train)
+    # X_train, y_train = under.fit_sample(X_train, y_train)
+
+    # print(X_train.shape, X_val.shape)
+    # printFullRow(X_train[:5])
+    # print(y_train.value_counts())
+
+    ##### Control
+    if standardize != 1:
+        X_train_og = X_train
+        y_train_og = y_train
+        test_train_og = test_train
+        test_val_og = test_val
+        return X_train_og, y_train_og, test_train_og, test_val_og
+
+    ###### Standarize and Normalize #####
+
+    scale = StandardScaler().fit(X_train[['CreditScore', 'Age', 'NumOfProducts']])
+    X_train[['CreditScore', 'Age', 'NumOfProducts']] = scale.transform(X_train[['CreditScore', 'Age', 'NumOfProducts']])
+    test_train[['CreditScore', 'Age', 'NumOfProducts']] = scale.transform(
+        test_train[['CreditScore', 'Age', 'NumOfProducts']])
+    robust_scale = RobustScaler().fit(X_train[['Balance']])
+    X_train[['Balance']] = robust_scale.transform(X_train[['Balance']])
+    test_train[['Balance']] = robust_scale.transform(test_train[['Balance']])
+    # normalize salary
+    salary_mean = X_train['EstimatedSalary'].mean()
+    salary_std = X_train['EstimatedSalary'].std()
+    X_train['EstimatedSalary'] = X_train['EstimatedSalary'].apply(lambda x: (x - salary_mean) / salary_std)
+    salary_mean = test_train['EstimatedSalary'].mean()
+    salary_std = test_train['EstimatedSalary'].std()
+    test_train['EstimatedSalary'] = test_train['EstimatedSalary'].apply(lambda x: (x - salary_mean) / salary_std)
+    # normalize tenure
+    tenure_mean = X_train['Tenure'].mean()
+    tenure_std = X_train['Tenure'].std()
+    X_train['Tenure'] = X_train['Tenure'].apply(lambda x: (x - tenure_mean) / tenure_std)
+    tenure_mean = test_train['Tenure'].mean()
+    tenure_std = test_train['Tenure'].std()
+    test_train['Tenure'] = test_train['Tenure'].apply(lambda x: (x - tenure_mean) / tenure_std)
+
+    return X_train, y_train, test_train, test_val
 # rawDataAnalysis()
 # getTestingData()
 # getTrainingData('train.csv', visualize=False, discrete=True, encoding=True)

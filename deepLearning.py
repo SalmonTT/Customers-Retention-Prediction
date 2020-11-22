@@ -1,10 +1,8 @@
 from tensorflow.keras.layers import Dense    #for Dense layers
 from tensorflow.keras.models import Sequential #for sequential implementation
-from sklearn.model_selection import train_test_split
+from tensorflow.keras.callbacks import EarlyStopping
 from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, f1_score
-from dataPreprocessing import getTrainingData
 from dataPreprocessing import *
-from sklearn.decomposition import PCA
 from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import StandardScaler
 from sklearn.utils import compute_class_weight
@@ -40,22 +38,18 @@ def kerasModel():
     )
     return classifier
 
-def useKeras(df):
+def useKeras():
     # ----- split training data -----
-    X_train = df.drop(['Exited'], axis=1)
-    y_train = df.Exited
-    # ----- standardizing the input features -----
-    scale = StandardScaler().fit(X_train)
-    X_train = scale.transform(X_train)
-
-    # ---- SMOTE ------
-    # method 1: technically only for continuous data
-    oversample = SMOTE()
-    X_train, y_train = oversample.fit_resample(X_train, y_train)
-
-
+    X_train, y_train, test_train, test_val = getAllCleanedDataBig()
+    print(np.bincount(y_train))
     # ----- building the model -----
     model = kerasModel()
+    early_stopping = EarlyStopping(
+        monitor='get_f1',
+        verbose=1,
+        patience=20,
+        mode='min',
+        restore_best_weights=True)
     # ----- class weights -----
     # class_weights = compute_class_weight('balanced', np.unique(y_train),y_train)
     # class_weights = {i : class_weights[i] for i in range(2)}
@@ -64,7 +58,8 @@ def useKeras(df):
         X_train,
         y_train,
         batch_size=3,
-        epochs=100,
+        epochs=20,
+        callbacks=[early_stopping]
         # class_weight='zeros'
     )
 
@@ -76,29 +71,23 @@ def useKeras(df):
     # print(pred_prob)
     # exportCSV('assignment-test.csv', pred_prob)
 
-    # ----- get testing data ---- #
-    df_test = getTestingData(False, True)
-    X_test = df_test.drop(['Exited'], axis=1)
-    X_test = scale.transform(X_test)
-    y_test = df_test.Exited
 
     # # ----- loss and accuracy -----
     # eval_model = model.evaluate(X_train, y_train)
     # print(eval_model)
-    y_pred = model.predict(X_test)
+    y_pred = model.predict(test_train)
     y_pred = (y_pred > 0.5)
-    cm = confusion_matrix(y_test, y_pred)
+    cm = confusion_matrix(test_val, y_pred)
     print(cm)
-    print("Accuracy score: ", accuracy_score(y_test, y_pred))
-    print("Precision score: ", precision_score(y_test, y_pred))
-    print("Recall score: ", recall_score(y_test, y_pred))
-    print("F1 score: ", f1_score(y_test, y_pred))
+    print("Accuracy score: ", accuracy_score(test_val, y_pred))
+    print("Precision score: ", precision_score(test_val, y_pred))
+    print("Recall score: ", recall_score(test_val, y_pred))
+    print("F1 score: ", f1_score(test_val, y_pred))
 
 
     return
 
 def tune():
-    df = getTrainingData('Train.csv', False, False, True)
-    useKeras(df)
+    useKeras()
 
 tune()

@@ -6,51 +6,55 @@ import pandas as pd
 import numpy as np
 import xgboost as xgb
 from imblearn.over_sampling import SMOTE, SMOTENC, BorderlineSMOTE
+from imblearn.combine import SMOTEENN
 
 
-def xgModel():
-    train = getTrainingData('train.csv', visualize=False, discrete=False, encoding=True)
-    X_train = train.drop(['Exited'], axis=1)
-    X_train = X_train[['Age','NumOfProducts', 'Active', 'Balance', 'Germany', 'CreditScore']]
-    y_train = train.Exited
-    # ----- SMOTE ------
-    # method 1: technically only for continuous data
-    oversample = SMOTE()
-    X_train, y_train = oversample.fit_resample(X_train, y_train)
-    # method 2: SMOTE NC
-    # smotenc = SMOTENC([4,6,7,8,9,10,11,12,13], random_state=101)
-    # X_train, y_train = smotenc.fit_resample(X, y)
-
-    # ----- random_state is a seed for random sampling -----
-    # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
+def xgModelNew():
+    X_train, y_train, X_val, y_val, test_train, test_val = getAllCleanedData(standardize=0, binning=1)
+    printFullDf(X_train.head())
 
     model = xgb.XGBClassifier()
     params = {
-        'n_estimators': [15,20],
-        'max_depth': [4,5,6],
-        'gamma': [0,1],
-        'learning_rate': [0.2],
-        'scale_pos_weight': [3, 1],
+        'n_estimators': [15, 20],
+        "colsample_bytree": [0.3, 0.4, 0.5, 0.7],
+        'max_depth': [4, 5, 6],
+        'gamma': [0, 0.1, 0.3 , 0.5, 0.7, 1],
+        'learning_rate': [0.05, 0.10, 0.15, 0.20, 0.25, 0.30 ],
+        "min_child_weight": [1, 3, 5, 7],
         'validate_parameters': [0]
     }
 
-    grid_search_cv = RandomizedSearchCV(model, params, verbose=1, n_jobs=1, cv=10, scoring='f1')
+    grid_search_cv = RandomizedSearchCV(model, params, verbose=1, n_jobs=5, cv=5, scoring='f1')
     grid_search_cv.fit(X_train, y_train)
     best_grid = grid_search_cv.best_estimator_
     print(best_grid)
-    # ----- get testing data ---- #
-    df_test = getTestingData(False, True)
-    X_test = df_test.drop(['Exited'], axis=1)
-    # ['Age', 'NumOfProducts', 'Active', 'Balance0', 'BalanceMid', 'Germany', 'CreditScore']
-    X_test= X_test[['Age','NumOfProducts', 'Active', 'Balance', 'Germany', 'CreditScore']]
-    y_test = df_test.Exited
-    print_score(grid_search_cv, X_train, y_train, X_test, y_test, train=True)
-    print_score(grid_search_cv, X_train, y_train, X_test, y_test, train=False)
-    # ----- export csv ------
-    # test_data = getTestData('assignment-test.csv', False, True, True)
-    # pred_prob = grid_search_cv.predict(test_data)
-    # print(pred_prob)
-    # exportCSV('assignment-test.csv', pred_prob)
-    return
+    print_score(grid_search_cv, X_train, y_train, X_val, y_val, train=True)
+    print_score(grid_search_cv, X_train, y_train, X_val, y_val, train=False)
+    print_score(grid_search_cv, X_train, y_train, test_train, test_val, train=False)
 
-xgModel()
+def tuning():
+    X_train, y_train, test_train, test_val = getAllCleanedDataBig(standardize=1)
+    printFullDf(X_train.head())
+
+    testing_params = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]
+    RFtrainAcc = []
+    RFtestAcc = []
+    for param in testing_params:
+        xgb_classifier = xgb.XGBClassifier(max_depth=4, min_child_weight=5, n_estimators=20,
+                                           learning_rate=0.22, colsample_bytree=0.45)
+        rf = xgb_classifier
+        rf.fit(X_train, y_train)
+        y_predTrain = rf.predict(X_train)
+        y_predTest = rf.predict(test_train)
+        RFtrainAcc.append(f1_score(y_train, y_predTrain))
+        RFtestAcc.append(f1_score(test_val, y_predTest))
+    print_score(xgb_classifier, X_train, y_train, test_train, test_val, train=False)
+    plt.plot(testing_params, RFtrainAcc, 'ro-', testing_params, RFtestAcc, 'bv--')
+    plt.legend(['Training f1', 'Test f1'])
+    plt.xlabel('n_estimators')
+    # plt.xscale('log')
+    plt.ylabel('f1')
+    plt.show()
+
+# tuning()
+xgModelNew()
