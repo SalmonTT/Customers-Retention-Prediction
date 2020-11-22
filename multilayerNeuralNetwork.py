@@ -1,5 +1,5 @@
 from sklearn.neural_network import MLPClassifier
-from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.model_selection import train_test_split, GridSearchCV, RandomizedSearchCV
 from dataPreprocessing import *
 from utils import *
 from imblearn.over_sampling import SMOTE
@@ -22,6 +22,25 @@ def useMultilayerNeuralNetwork():
     X_train = scale.transform(X_train)
     X_test = scale.transform(X_test)
     multilayerNeuralNetwork(X_train, X_test, y_train, y_test)
+
+def newMNN():
+    X_train, y_train, test_train, test_val = getAllCleanedDataBig(standardize = 1)
+    # X_train, y_train, X_val, y_val, test_train, test_val = getAllCleanedData(standardize=1, binning=0)
+
+    model = MLPClassifier()
+    params = {'hidden_layer_sizes': [(100,50), (100,)],
+              'solver': ['adam'],
+              'activation': ['logistic'],
+              'max_iter': [1000]
+              }
+
+    grid_search_cv = RandomizedSearchCV(model, params, verbose=1, n_jobs=5, cv=5, scoring='f1')
+    grid_search_cv.fit(X_train, y_train)
+    best_grid = grid_search_cv.best_estimator_
+    print(best_grid)
+    print_score(grid_search_cv, X_train, y_train, test_train, test_val, train=True)
+    # print_score(grid_search_cv, X_train, y_train, X_val, y_val, train=False)
+    print_score(grid_search_cv, X_train, y_train, test_train, test_val, train=False)
 
 def multilayerNN():
     train = getTrainingData('train.csv', visualize=False, discrete=False, encoding=True)
@@ -62,5 +81,4 @@ def multilayerNN():
 
     return
 
-
-multilayerNN()
+newMNN()

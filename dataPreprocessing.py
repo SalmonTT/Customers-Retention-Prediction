@@ -113,7 +113,7 @@ def getTestingData(discrete=True, encoding=True):
         result = discretization(result)
     if encoding:
         result = oneHotEncoding(result, 2)
-        result.drop(['Spain', 'Male', 'NotActive'], axis=1, inplace=True)
+        result.drop(['Spain', 'Male'], axis=1, inplace=True)
     # print(result[result['Exited'] == 1].shape)
     # histogram(result[result['Exited'] == 1])
     result.to_csv('testing.csv', index=False)
