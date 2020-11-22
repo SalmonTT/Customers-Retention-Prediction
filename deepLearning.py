@@ -21,7 +21,6 @@ def get_f1(y_true, y_pred): #taken from old keras source code
     return f1_val
 
 def kerasModel():
-
     # https://medium.com/datadriveninvestor/building-neural-network-using-keras-for-classification-3a3656c726c1
     classifier = Sequential()
     # First Hidden Layer

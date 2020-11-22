@@ -50,6 +50,7 @@ def discretization(df):
     # df['BalanceMid'] = df['Balance'].apply(lambda x: 1 if x > 98196 else 0)
     return df
 
+# Use X_train, X_test = standard(X_train, X_test)
 def standard(X_train, X_test):
     # Standardization, or mean removal and variance scaling
     scale = StandardScaler().fit(X_train)
