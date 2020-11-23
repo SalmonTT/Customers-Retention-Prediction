@@ -52,18 +52,8 @@ def TuneRandomForest(X_train, X_test, y_train, y_test):
 
 
 def useRandomForest():
-    train = getTrainingData('train.csv', visualize=False, discrete=True, encoding=True)
-    X_train = train.drop(['Exited'], axis=1)
-    y_train = train.Exited
-    # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
-    oversample = SMOTE()
-    X_train, y_train = oversample.fit_resample(X_train, y_train)
-
-    df_test = getTestingData(True, True)
-    X_test = df_test.drop(['Exited'], axis=1)
-    y_test = df_test.Exited
-
-    randomForest(X_train, X_test, y_train, y_test)
+    X_train, y_train, X_val, y_val, test_train, test_val = getAllCleanedData(standardize=0, binning=1)
+    randomForest(X_train, X_val, y_train, y_val)
     # TuneRandomForest(X_train, X_test, y_train, y_test)
 
 useRandomForest()
