@@ -52,6 +52,11 @@ def TuneRandomForest(X_train, X_test, y_train, y_test):
 
 
 def useRandomForest():
+
+    X_train, y_train, X_val, y_val, test_train, test_val = getAllCleanedData(standardize=0, binning=1)
+    randomForest(X_train, X_val, y_train, y_val)
+    # TuneRandomForest(X_train, X_test, y_train, y_test)
+
     train = getTrainingData('train.csv', visualize=False, discrete=False, encoding=True)
     X_train = train.drop(['Exited'], axis=1)
     y_train = train.Exited
@@ -93,5 +98,6 @@ def useRandomForest():
     # exportCSV('assignment-test.csv', pred_prob)
 
     return
+
 
 useRandomForest()
