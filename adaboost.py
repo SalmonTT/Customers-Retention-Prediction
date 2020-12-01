@@ -2,8 +2,8 @@ from sklearn.ensemble import AdaBoostClassifier
 #from sklearn.model_selection import cross_val_score
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
-from FTEC4003.dataPreprocessing import getTrainingData
-from FTEC4003.utils import print_score, ROC
+from dataPreprocessing import getTrainingData
+from utils import print_score, ROC
 #not tunned yet
 
 def adaboost(X_train, X_test, y_train, y_test):

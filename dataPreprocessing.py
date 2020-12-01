@@ -1,9 +1,10 @@
 
 from sklearn.decomposition import PCA
-from tensorflow._api.v2 import train
 from sklearn.preprocessing import OneHotEncoder, StandardScaler, MinMaxScaler, Normalizer
 import pandas as pd
-from FTEC4003.utils import printFullRow
+from utils import printFullRow
+
+from utils import corrAnalysis
 
 
 def pca(df, task):
