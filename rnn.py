@@ -2,11 +2,11 @@ import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from tensorflow.python import keras
-from keras.layers import Input, Dense, SimpleRNN, RNN
-from keras.models import Model
-from keras.preprocessing import sequence
+from tensorflow.keras.layers import Input, Dense, SimpleRNN, RNN
+from tensorflow.keras.models import Model
+from tensorflow.keras.preprocessing import sequence
 
-from FTEC4003.dataPreprocessing import getTrainingData
+from dataPreprocessing import getTrainingData
 
 
 def rnn(X_train, X_test, y_train, y_test):
@@ -26,13 +26,13 @@ def rnn(X_train, X_test, y_train, y_test):
     rnn.fit(X_train, y_train, epochs=1, batch_size=batchs_size, validation_data=(X_test, y_test))
     rnn.summary()
 
-    def useRnn():
-        train = getTrainingData('train.csv', visualize=False)
-        X = train.drop(['Exited'], axis=1)
-        sc = StandardScaler()
-        X = sc.fit_transform(X)
-        y = train.Exited
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
-        rnn(X_train, X_test, y_train, y_test)
+def useRnn():
+    train = getTrainingData('train.csv', visualize=False)
+    X = train.drop(['Exited'], axis=1)
+    sc = StandardScaler()
+    X = sc.fit_transform(X)
+    y = train.Exited
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
+    rnn(X_train, X_test, y_train, y_test)
 
-    useRnn()
+useRnn()

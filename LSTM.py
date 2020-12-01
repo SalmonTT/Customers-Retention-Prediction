@@ -1,14 +1,14 @@
 import numpy
 import math
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.layers import LSTM
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import LSTM
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.metrics import mean_squared_error
 from tensorflow._api.v2 import train, test
 
-from FTEC4003.dataPreprocessing import getTrainingData
+from dataPreprocessing import getTrainingData
 
 
 def lstm(X_train, X_test, y_train, y_test):
