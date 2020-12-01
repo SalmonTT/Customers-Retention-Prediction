@@ -127,7 +127,7 @@ def rawDataAnalysis():
     # pd.crosstab(train.HasCrCard, train.Exited).plot(kind='bar')
     # plt.show()
 
-def getAllCleanedData(standardize = 1, binning=0):
+def getAllCleanedData(standardize = 0, binning=0):
     df = pd.read_csv('train.csv', header=0)
     # printFullRow(df)
     # print(df['Exited'].value_counts())
@@ -187,9 +187,9 @@ def getAllCleanedData(standardize = 1, binning=0):
     X_val.drop(['France', 'Female'], axis=1, inplace=True)
     test_train.drop(['France', 'Female'], axis=1, inplace=True)
 
-
-
     ###### Oversample training  data #####
+    # random_state=101 gives 0.618
+    # random_state=5 gives 0.61846
     svmsmote = SVMSMOTE(random_state=101)
     X_train, y_train = svmsmote.fit_resample(X_train, y_train)
     # smk = SMOTE()
