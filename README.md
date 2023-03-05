@@ -7,7 +7,7 @@ tensorflow requires **numpy 1.16.0**:
 ```bash
 pip install --upgrade numpy==1.16.0
 ```
-# FTEC4003 Course Project Task 2: How many Customers Stay
+# FTEC4003 Course Project Task 2: Customers Retention
 ## 1. Background
 - This data comes from clients of a bank. These clients have already had accounts in this bank. Nowadays, the bank wants to model whether they will stay or not in the future. The task is to do the binary classification based on the given information, which gives extra information to the bank to stabilize the customers.
 ## 2. Data Set Information
